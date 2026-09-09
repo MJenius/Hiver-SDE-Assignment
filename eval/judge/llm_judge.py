@@ -11,13 +11,32 @@ from typing import Dict, Any, List, Optional
 from src.llm.gemini_client import GeminiClient
 from src.llm.cache import DiskLLMCache
 
-JUDGE_SYSTEM_PROMPT = """You are an impartial, highly rigorous expert judge evaluating customer support replies for AppleCare.
-Score customer support responses objectively on a 1-5 integer scale across these axes:
-1. Groundedness (1-5): 5 = completely grounded in evidence; 1 = completely fabricated/hallucinated policy or facts.
-2. Actionability (1-5): 5 = concrete, clear executable steps; 1 = vague brush-off or unhelpful deflection.
-3. Relevance (1-5): 5 = directly solves the specific symptom asked; 1 = addresses wrong problem.
-4. Brand Consistency (1-5): 5 = empathetic, professional, concise AppleCare voice; 1 = unprofessional, abrasive, or overly verbose.
-Output strict JSON."""
+RUBRIC_SYSTEM_PROMPT = """You are an objective evaluation judge auditing AI customer support replies for AppleCare on Twitter.
+Score responses on a 1-5 integer scale across these axes:
+
+1. Groundedness (1-5):
+   - 5 = Completely grounded in provided evidence or follows standard verified Apple troubleshooting logic.
+   - 3 = Partially grounded or asks safe clarifying questions when information is incomplete.
+   - 1 = Hallucinates fake features, invalid policies, or incorrect technical procedures.
+   Note: Asking necessary diagnostic questions (e.g. "What device/iOS version are you on?") is safe and valid customer support behavior.
+
+2. Actionability (1-5):
+   - 5 = Clear, actionable solution or immediate executable diagnostic instruction.
+   - 4 = Appropriate clarifying question or routing step when the customer gave incomplete symptom details.
+   - 2 = Vague or generic brush-off without guiding the customer.
+   - 1 = Confusing, unexecutable, or detrimental advice.
+
+3. Relevance (1-5):
+   - 5 = Directly addresses the user's inquiry, error symptom, or emotional state.
+   - 3 = Tangentially relevant or addresses only one part of a multi-part complaint.
+   - 1 = Completely misidentifies the problem.
+
+4. Brand Consistency & Brevity (1-5):
+   - 5 = Concise, professional, empathetic, Twitter-native (<280 chars) AppleCare voice.
+   - 3 = Overly verbose, long bulleted essays unsuited for social support, or slightly robotic.
+   - 1 = Abrasive, rude, or unprofessional.
+
+Output strict JSON conforming to schema."""
 
 PAIRWISE_SYSTEM_PROMPT = """You are an impartial expert judge evaluating two customer support replies for AppleCare.
 Given a customer inquiry and the available historical evidence, determine which response is better.
@@ -76,7 +95,7 @@ Provide 1-5 ratings across the 4 axes."""
         try:
             return self.client.generate_json(
                 prompt=prompt,
-                system_instruction=JUDGE_SYSTEM_PROMPT,
+                system_instruction=RUBRIC_SYSTEM_PROMPT,
                 temperature=0.0,
                 response_schema=SCORE_SCHEMA,
                 cache_key_extra={"eval_target": response_text}

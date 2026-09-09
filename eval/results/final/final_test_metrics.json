@@ -1,0 +1,178 @@
+{
+  "metadata": {
+    "experiment_id": "exp_final_phase3_001",
+    "git_commit": "78f2619",
+    "sample_size": 200,
+    "split": "test",
+    "operating_threshold_tau": 0.55
+  },
+  "intent_classification": {
+    "accuracy": {
+      "point_estimate": 0.845,
+      "ci_lower": 0.795,
+      "ci_upper": 0.895,
+      "std_err": 0.026,
+      "n": 200
+    },
+    "macro_f1": {
+      "point_estimate": 0.8668,
+      "ci_lower": 0.8228,
+      "ci_upper": 0.9047,
+      "std_err": 0.0215,
+      "n": 200
+    },
+    "classification_report": {
+      "app_store_billing_subscriptions": {
+        "precision": 1.0,
+        "recall": 0.85,
+        "f1-score": 0.918918918918919,
+        "support": 20.0
+      },
+      "apple_id_account_security": {
+        "precision": 1.0,
+        "recall": 0.8,
+        "f1-score": 0.8888888888888888,
+        "support": 20.0
+      },
+      "audio_music_media": {
+        "precision": 1.0,
+        "recall": 0.65,
+        "f1-score": 0.7878787878787878,
+        "support": 20.0
+      },
+      "battery_performance": {
+        "precision": 1.0,
+        "recall": 0.95,
+        "f1-score": 0.9743589743589743,
+        "support": 20.0
+      },
+      "connectivity_wifi_bluetooth": {
+        "precision": 1.0,
+        "recall": 0.6,
+        "f1-score": 0.75,
+        "support": 20.0
+      },
+      "hardware_screen_physical": {
+        "precision": 1.0,
+        "recall": 0.95,
+        "f1-score": 0.9743589743589743,
+        "support": 20.0
+      },
+      "icloud_sync_storage": {
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1-score": 0.9473684210526315,
+        "support": 20.0
+      },
+      "os_update_issues": {
+        "precision": 1.0,
+        "recall": 0.95,
+        "f1-score": 0.9743589743589743,
+        "support": 20.0
+      },
+      "store_orders_shipping": {
+        "precision": 1.0,
+        "recall": 0.8,
+        "f1-score": 0.8888888888888888,
+        "support": 20.0
+      },
+      "unknown": {
+        "precision": 0.39215686274509803,
+        "recall": 1.0,
+        "f1-score": 0.5633802816901409,
+        "support": 20.0
+      },
+      "accuracy": 0.845,
+      "macro avg": {
+        "precision": 0.9392156862745098,
+        "recall": 0.845,
+        "f1-score": 0.8668401110395179,
+        "support": 200.0
+      },
+      "weighted avg": {
+        "precision": 0.9392156862745098,
+        "recall": 0.845,
+        "f1-score": 0.8668401110395181,
+        "support": 200.0
+      }
+    }
+  },
+  "escalation_policy": {
+    "recall": {
+      "point_estimate": 0.9355,
+      "ci_lower": 0.8812,
+      "ci_upper": 0.9872,
+      "std_err": 0.0263,
+      "n": 200
+    },
+    "precision": {
+      "point_estimate": 0.7699,
+      "ci_lower": 0.6893,
+      "ci_upper": 0.85,
+      "std_err": 0.0398,
+      "n": 200
+    },
+    "f1": {
+      "point_estimate": 0.8447,
+      "ci_lower": 0.7861,
+      "ci_upper": 0.8959,
+      "std_err": 0.0279,
+      "n": 200
+    },
+    "coverage": {
+      "point_estimate": 0.435,
+      "ci_lower": 0.37,
+      "ci_upper": 0.505,
+      "std_err": 0.0348,
+      "n": 200
+    },
+    "false_auto_handle_rate": {
+      "point_estimate": 0.069,
+      "ci_lower": 0.023,
+      "ci_upper": 0.1264,
+      "std_err": 0.0282,
+      "n": 87
+    }
+  },
+  "retrieval": {
+    "recall_at_1": {
+      "point_estimate": 0.1,
+      "ci_lower": 0.06,
+      "ci_upper": 0.14,
+      "std_err": 0.0204,
+      "n": 200
+    },
+    "recall_at_3": {
+      "point_estimate": 0.1,
+      "ci_lower": 0.06,
+      "ci_upper": 0.14,
+      "std_err": 0.0204,
+      "n": 200
+    },
+    "recall_at_5": {
+      "point_estimate": 0.1,
+      "ci_lower": 0.06,
+      "ci_upper": 0.14,
+      "std_err": 0.0204,
+      "n": 200
+    },
+    "mrr": {
+      "point_estimate": 0.1,
+      "ci_lower": 0.06,
+      "ci_upper": 0.14,
+      "std_err": 0.0204,
+      "n": 200
+    }
+  },
+  "grounding": {
+    "claim_groundedness_rate": {
+      "point_estimate": 1.0,
+      "ci_lower": 1.0,
+      "ci_upper": 1.0,
+      "std_err": 0.0,
+      "n": 200
+    },
+    "total_claims": 87,
+    "unsupported_claims": 0
+  }
+}

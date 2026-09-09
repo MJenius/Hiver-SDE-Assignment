@@ -1,0 +1,51 @@
+{
+  "intent_macro_f1": {
+    "point_estimate": 0.8668,
+    "ci_lower": 0.8228,
+    "ci_upper": 0.9047,
+    "std_err": 0.0215,
+    "n": 200
+  },
+  "escalation_recall": {
+    "point_estimate": 0.9355,
+    "ci_lower": 0.8812,
+    "ci_upper": 0.9872,
+    "std_err": 0.0263,
+    "n": 200
+  },
+  "escalation_precision": {
+    "point_estimate": 0.7699,
+    "ci_lower": 0.6893,
+    "ci_upper": 0.85,
+    "std_err": 0.0398,
+    "n": 200
+  },
+  "autonomous_coverage": {
+    "point_estimate": 0.435,
+    "ci_lower": 0.37,
+    "ci_upper": 0.505,
+    "std_err": 0.0348,
+    "n": 200
+  },
+  "false_auto_handle_rate": {
+    "point_estimate": 0.069,
+    "ci_lower": 0.023,
+    "ci_upper": 0.1264,
+    "std_err": 0.0282,
+    "n": 87
+  },
+  "retrieval_mrr": {
+    "point_estimate": 0.1,
+    "ci_lower": 0.06,
+    "ci_upper": 0.14,
+    "std_err": 0.0204,
+    "n": 200
+  },
+  "claim_groundedness": {
+    "point_estimate": 1.0,
+    "ci_lower": 1.0,
+    "ci_upper": 1.0,
+    "std_err": 0.0,
+    "n": 200
+  }
+}

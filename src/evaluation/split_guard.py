@@ -1,4 +1,4 @@
-﻿"""
+"""
 src/evaluation/split_guard.py
 Automated leakage detection and split contract enforcement.
 Guarantees:
@@ -8,6 +8,7 @@ Guarantees:
 4. Quarantined test set (zero cases from test enter training or retrieval indexes)
 """
 
+import os
 import json
 from typing import Dict, List, Set, Any
 import pandas as pd
@@ -56,15 +57,44 @@ def audit_case_splits(cases_path: str = "data/processed/cases.jsonl") -> Dict[st
             if tweet_overlap:
                 raise SplitLeakageError(f"Leakage detected! {len(tweet_overlap)} customer tweet IDs shared between {s1} and {s2}. Example: {list(tweet_overlap)[:3]}")
 
-    return {
+    # 2. Assert Quarantined Golden Test Set Isolation
+    golden_test_path = "eval/golden/final/golden_test.jsonl"
+    golden_cases_count = 0
+    if os.path.exists(golden_test_path):
+        with open(golden_test_path, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    rec = json.loads(line)
+                    cid = rec["conversation_id"]
+                    case_id = rec["case_id"]
+                    golden_cases_count += 1
+                    # Golden test must NEVER belong to train, dev, or val
+                    if cid in split_convs["train"] or case_id in split_cases["train"]:
+                        raise SplitLeakageError(f"Critical Leakage! Golden test case {case_id} found in TRAIN partition!")
+                    if cid in split_convs["dev"] or case_id in split_cases["dev"]:
+                        raise SplitLeakageError(f"Critical Leakage! Golden test case {case_id} found in DEV partition!")
+                    if cid in split_convs["val"] or case_id in split_cases["val"]:
+                        raise SplitLeakageError(f"Critical Leakage! Golden test case {case_id} found in VAL partition!")
+
+    output_payload = {
         "status": "PASSED",
         "total_cases_audited": total_records,
         "split_counts": {s: len(split_cases[s]) for s in splits_list},
         "unique_conversations": {s: len(split_convs[s]) for s in splits_list},
         "conversation_overlap": 0,
         "case_overlap": 0,
-        "tweet_overlap": 0
+        "tweet_overlap": 0,
+        "golden_test_cases_audited": golden_cases_count,
+        "golden_test_in_train_overlap": 0,
+        "golden_test_in_val_overlap": 0,
+        "integrity_enforced": True
     }
+
+    os.makedirs("eval/results/integrity", exist_ok=True)
+    with open("eval/results/integrity/leakage_audit.json", "w", encoding="utf-8") as f:
+        json.dump(output_payload, f, indent=2)
+
+    return output_payload
 
 if __name__ == "__main__":
     result = audit_case_splits()

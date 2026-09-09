@@ -1,0 +1,73 @@
+# Frozen Configuration for Final Phase 3 Test Evaluation
+experiment_name: "AppleSupport_EndToEnd_Phase3_Final"
+experiment_id: "exp_final_phase3_001"
+timestamp: "2026-09-09T20:30:00Z"
+git_commit: "78f2619"
+
+data:
+  dataset_name: "Customer Support on Twitter (twcs.csv)"
+  dataset_sha256: "cd297fcfa1bf6f99938be242e8e578980bc6d1b96adc8691abec9a39175b03c0"
+  cases_file: "data/processed/cases.jsonl"
+  golden_test_file: "eval/golden/final/golden_test.jsonl"
+  golden_sample_size: 200
+  hard_set_file: "eval/hard/candidates/hard_candidates.jsonl"
+  hard_sample_size: 100
+
+random_seed: 42
+
+models:
+  intent_classifier:
+    model_type: "TF-IDF + Multinomial Logistic Regression"
+    ngram_range: [1, 2]
+    max_features: 10000
+    sublinear_tf: true
+    C: 1.0
+    confidence_threshold: 0.35
+    fallback_intent: "unknown"
+
+  retrieval:
+    index_file: "data/retrieval_index.pkl"
+    indexed_split: "train"
+    total_cases_indexed: 30000
+    bm25_k1: 1.5
+    bm25_b: 0.75
+    fusion_strategy: "Reciprocal Rank Fusion (RRF)"
+    rrf_k: 60
+    top_k: 5
+    score_threshold: 0.05
+
+  escalation:
+    policy_rules:
+      - "unknown_intent_fallback"
+      - "low_confidence_fallback"
+      - "apple_id_account_security"
+      - "app_store_billing_subscriptions"
+      - "hardware_screen_physical"
+      - "low_retrieval_similarity"
+      - "unsupported_claim_rejection"
+    operating_threshold_tau: 0.55
+    retrieval_score_threshold: 0.05
+
+  generation:
+    provider: "Gemini"
+    default_model: "gemini-2.5-flash-lite"
+    temperature: 0.2
+    max_output_tokens: 600
+    cache_dir: "data/llm_cache"
+    claim_attribution: true
+
+  judge:
+    provider: "Gemini"
+    judge_model: "gemini-2.5-flash-lite"
+    temperature: 0.0
+    rubric_scale: [1, 5]
+    dimensions:
+      - "groundedness"
+      - "actionability"
+      - "relevance"
+      - "brand_consistency"
+
+bootstrap:
+  iterations: 1000
+  confidence_level: 0.95
+  seed: 42

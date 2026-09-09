@@ -136,3 +136,49 @@ This log records the 12 key engineering and methodological decisions made during
 * **Evidence**: Quantitative sweep across 6 threshold points ($N=1,500$) in `eval/results/escalation/threshold_sweep.csv`.
 * **Alternative Considered**: Lowering the threshold to $\tau = 0.40$ to increase nominal coverage to 30.2%.
 * **Why Rejected**: Increased false auto-handling risk on borderline ambiguous inquiries.
+
+---
+
+### Decision 16: Independent Human Ground-Truth Escalation Labels (Eliminating Circularity)
+* **Decision**: Create a quarantined final test set ($N=200$, `eval/golden/final/golden_test.jsonl`) with independent human ground-truth labels for `should_escalate` and `escalation_reason`, completely decoupled from heuristic rule policies or classifier outputs.
+* **Why**: Deriving ground-truth escalation from classifier thresholds or rule heuristics creates circular evaluation, guaranteeing artificially high recall while blinding the evaluation to true policy failures.
+* **Evidence**: Evaluated on independent labels, true escalation recall was 93.55% (revealing 6 critical transactional misses) rather than the circular 99.12% measured under rule-derived assumptions.
+* **Alternative Considered**: Using rule-heuristic labels as ground truth.
+* **Why Rejected**: Scientifically invalid; masks false auto-handle failures.
+
+---
+
+### Decision 17: Quarantined Final Test Set Split & Hash Freezing
+* **Decision**: Materialize exactly 200 stratified test cases from the held-out `test` split (`split == "test"`), compute SHA-256 integrity digests, and enforce a strict policy of zero tuning against this set.
+* **Why**: Prevents optimization overfitting and p-hacking. The agent configuration was frozen in `configs/final_eval.yaml` prior to executing the benchmark.
+* **Evidence**: Documented in `eval/results/integrity/leakage_audit.json` showing 0 overlap across 81,767 cases.
+* **Alternative Considered**: Reusing dev/validation cases for final reporting.
+* **Why Rejected**: Violates fundamental test-set quarantine principles.
+
+---
+
+### Decision 18: Mandatory 95% Bootstrap Confidence Intervals ($B=1,000$)
+* **Decision**: Compute and report empirical bootstrap confidence intervals ($B=1,000$, seed=42) for every evaluation metric across intent, escalation, retrieval, and groundedness.
+* **Why**: Point estimates on $N=200$ test cases have variance; presenting point estimates as absolute truth misleads stakeholders on real performance uncertainty.
+* **Evidence**: Autonomous coverage is 43.50% [95% CI: 37.00% – 50.50%]; False Auto-Handle Rate is 6.90% [95% CI: 2.30% – 12.64%].
+* **Alternative Considered**: Reporting only scalar point estimates.
+* **Why Rejected**: Fails statistical rigour standards for ML systems.
+
+---
+
+### Decision 19: Dual-Annotator Agreement Study for Ground-Truth Quality
+* **Decision**: Conduct an empirical dual-annotation agreement study on 50 sampled test cases and compute Cohen's Kappa for both intent and escalation.
+* **Why**: Ensures human ground-truth reliability before benchmarking the automated model.
+* **Evidence**: Intent agreement reached 92.0% (Cohen's Kappa = 0.8742); escalation agreement reached 88.0% (Cohen's Kappa = 0.6739), demonstrating strong inter-rater reliability.
+* **Alternative Considered**: Relying on single-annotator subjective judgment without validation.
+* **Why Rejected**: Unchecked single-annotator noise contaminates the evaluation benchmark.
+
+---
+
+### Decision 20: Groundedness Guarding & Failure Mode Taxonomy
+* **Decision**: Refuse generation on low confidence/intent uncertainty and catalog real model failures into a 5-tier failure corpus (`docs/failure_analysis.md`).
+* **Why**: Transparent failure analysis provides engineering actionable remediations rather than brushing errors under the rug.
+* **Evidence**: Identified critical transactional false auto-handling (FM-01) where users asking to cancel orders received generic tracking links.
+* **Alternative Considered**: Claiming aggregate 100% groundedness without analyzing failure cases.
+* **Why Rejected**: Dishonest engineering that hides operational deployment risks.
+

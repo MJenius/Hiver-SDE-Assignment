@@ -1,4 +1,4 @@
-﻿"""
+"""
 eval/run_agent_eval.py
 Executes Phase 2 core benchmarks with immediate atomic disk checkpointing:
 1. LLM-Only vs RAG (Retrieval-Augmented Generation)
@@ -105,8 +105,12 @@ def run_agent_benchmarks(sample_size: int = 15):
     print(f"  RAG:      Groundedness={avg_rag_g:.2f}, Actionability={avg_rag_a:.2f}, Overall={avg_rag_o:.2f}")
 
     print("\n--- Experiment 2: Historical vs AI Response (Pairwise Swap) ---")
-    ai_wins, hist_wins, ties = 0, 0, 0
+    ai_wins, hist_wins, genuine_ties, rate_limited = 0, 0, 0, 0
     exp2_checkpoint_file = os.path.join(CHECKPOINT_DIR, "exp2_pairwise.jsonl")
+
+    # Clear old checkpoint to re-evaluate cleanly with updated judge
+    if os.path.exists(exp2_checkpoint_file):
+        os.remove(exp2_checkpoint_file)
 
     for idx, (case, s_rag) in enumerate(zip(eval_set[:10], rag_scores[:10]), 1):
         q = case["customer_message"]
@@ -115,18 +119,30 @@ def run_agent_benchmarks(sample_size: int = 15):
 
         comp = judge.compare_pairwise(q, ai_resp, hist_resp, evidence_text=hist_resp)
         winner = comp["winner"]
-        if winner == "A":
+        reason = comp.get("reason", "")
+        
+        if "429" in reason or "RESOURCE_EXHAUSTED" in reason or "Judge error" in reason:
+            rate_limited += 1
+            status = "rate_limited"
+        elif winner == "A":
             ai_wins += 1
+            status = "ai_preferred"
         elif winner == "B":
             hist_wins += 1
+            status = "historical_preferred"
         else:
-            ties += 1
+            genuine_ties += 1
+            status = "genuine_tie"
 
         with open(exp2_checkpoint_file, "a", encoding="utf-8") as f:
-            f.write(json.dumps({"index": idx, "winner": winner, "comp": comp}) + "\n")
+            f.write(json.dumps({"index": idx, "winner": winner, "status": status, "comp": comp}) + "\n")
 
-    tot_comp = 10
-    print(f"  AI Win Rate: {ai_wins/tot_comp*100:.1f}%, Historical Win Rate: {hist_wins/tot_comp*100:.1f}%, Tie Rate: {ties/tot_comp*100:.1f}%")
+    valid_comp = ai_wins + hist_wins + genuine_ties
+    print(f"  Attempted Comparisons: 10, Valid Comparisons: {valid_comp}, Rate-Limited Calls: {rate_limited}")
+    if valid_comp > 0:
+        print(f"  Valid Subsample: AI Win Rate={ai_wins/valid_comp*100:.1f}%, Hist Win Rate={hist_wins/valid_comp*100:.1f}%, Tie Rate={genuine_ties/valid_comp*100:.1f}%")
+    else:
+        print("  All comparisons were rate-limited under Gemini free-tier quota (transparently reported; zero false wins attributed).")
 
     print("\n--- Experiment 3: Human vs LLM Judge Calibration ---")
     human_groundedness = []
@@ -168,9 +184,15 @@ def run_agent_benchmarks(sample_size: int = 15):
             "rag": {"groundedness": avg_rag_g, "actionability": avg_rag_a, "overall": avg_rag_o}
         },
         "pairwise_comparison": {
-            "ai_win_rate": ai_wins / tot_comp,
-            "historical_win_rate": hist_wins / tot_comp,
-            "tie_rate": ties / tot_comp
+            "attempted_comparisons": 10,
+            "valid_comparisons": valid_comp,
+            "rate_limited_comparisons": rate_limited,
+            "ai_wins": ai_wins,
+            "historical_wins": hist_wins,
+            "genuine_ties": genuine_ties,
+            "ai_win_rate_valid": (ai_wins / valid_comp) if valid_comp > 0 else 0.0,
+            "historical_win_rate_valid": (hist_wins / valid_comp) if valid_comp > 0 else 0.0,
+            "tie_rate_valid": (genuine_ties / valid_comp) if valid_comp > 0 else 0.0
         },
         "judge_validation": {
             "exact_agreement": exact_agreement,

@@ -1,9 +1,9 @@
 # AI Customer Support Agent Benchmark — @AppleSupport
 
-[![Tests](https://img.shields.io/badge/pytest-10%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/pytest-12%20passed-brightgreen.svg)]()
 [![Dataset SHA-256](https://img.shields.io/badge/SHA--256-cd297fcf...-blue.svg)](docs/data_manifest.json)
 [![Selected Brand](https://img.shields.io/badge/Brand-%40AppleSupport-black.svg)](docs/brand_selection.md)
-[![Phase](https://img.shields.io/badge/Phase-2%20Complete-success.svg)]()
+[![Phase](https://img.shields.io/badge/Phase-3%20Final%20Complete-success.svg)]()
 
 This repository implements an end-to-end, empirically grounded AI Customer Support Agent for `@AppleSupport` built on the Kaggle "Customer Support on Twitter" dataset (`data/twcs/twcs.csv`).
 
@@ -12,34 +12,66 @@ The system combines:
 2. **Bounded-Context Historical Retrieval** via multi-stage hybrid search (BM25 + Dense embeddings + RRF fusion + Cross-Encoder re-ranking).
 3. **Safety-First Escalation Policy** with deterministic rule-based interception for sensitive domains and calibrated confidence thresholding ($\tau = 0.55$).
 4. **Evidence-Grounded Response Generation** producing structured claims attributed directly to retrieved historical resolution cases, monitored by an independent claim auditor.
-5. **Zero-Leakage Whole-Conversation Evaluation** across 4 strictly disjoint partitions (`train`, `dev`, `val`, `test`), baselines, and LLM-as-judge calibration.
+5. **Zero-Leakage Whole-Conversation Evaluation** across 4 strictly disjoint partitions (`train`, `dev`, `val`, `test`), baselines, and empirical 95% bootstrap confidence intervals ($B=1,000$).
 
 ---
 
-## 1. System Architecture
+## 1. Official Final Benchmark Results (Quarantined Test Set, $N=200$)
 
-```mermaid
-graph TD
-    A[Customer Tweet / Inbound Inquiry] --> B[Intent Classifier]
-    B --> C{Confidence >= 0.55?}
-    C -->|No / Unknown| ESC[Escalate to Human Agent]
-    C -->|Yes| D[Check Policy Rules]
-    D -->|Security / Billing / Hardware| ESC
-    D -->|Safe Operational Intent| E[Hybrid Retrieval Suite: BM25 + Dense RRF]
-    E --> F{Retrieval Score >= 0.05?}
-    F -->|No Evidence| ESC
-    F -->|Grounded Evidence| G[Grounded Response Generator]
-    G --> H[Independent Evidence Checker]
-    H -->|Unsupported Claims| ESC
-    H -->|Audited & Grounded| I[Auto-Handle: Output Support Reply]
-```
+The agent was frozen in [`configs/final_eval.yaml`](configs/final_eval.yaml) and evaluated **exactly once** on the quarantined, held-out test set (`eval/golden/final/golden_test.jsonl`, $N=200$) with independent human ground truth labels for intent, escalation necessity, and evidence sufficiency.
+
+All metrics are reported with empirical 95% Bootstrap Confidence Intervals ($B=1,000$, seed=42):
+
+| Component / Metric | Point Estimate | 95% Bootstrap Confidence Interval | Evaluation Ground Truth |
+|---|---|---|---|
+| **Intent Accuracy** | **0.8450** | [0.7950, 0.8950] | Human consensus (10 classes) |
+| **Intent Macro-F1** | **0.8668** | [0.8228, 0.9047] | Human consensus (10 classes) |
+| **Escalation Recall** | **0.9355** | [0.8812, 0.9872] | Independent human escalation label |
+| **Escalation Precision** | **0.7699** | [0.6893, 0.8500] | Independent human escalation label |
+| **Escalation F1** | **0.8447** | [0.7861, 0.8959] | Independent human escalation label |
+| **Autonomous Coverage** | **43.50%** | [37.00%, 50.50%] | Full pipeline decision |
+| **False Auto-Handle Rate (FAHR)** | **6.90%** | [2.30%, 12.64%] | Human risk adjudication ($N=87$ handled) |
+| **Retrieval Top-5 MRR** | **0.1000** | [0.0600, 0.1400] | Ground-truth intent match |
+| **Claim Groundedness** | **100.00%** | [100.00%, 100.00%] | Independent evidence checker |
+
+*Note: All results are machine-reproducible in under 2 minutes via `python scripts/run_final_evaluation.py`.*
 
 ---
 
-## 2. Empirical Benchmark Results
+## 2. What Is Misleading About Our Headline Numbers?
 
-### 2.1 Complete Ablation Matrix
-Evaluated on the held-out **VALIDATION** partition ($N=1,500$ queries for escalation, $N=3,000$ for classification):
+In production AI engineering, transparently detailing failure boundaries is critical. Below is the honest critique of our headline results (detailed in [`docs/misleading_headlines.md`](docs/misleading_headlines.md)):
+
+1. **"93.55% Escalation Recall" is achieved through high conservatism**:
+   * The policy routes **56.5%** of all incoming requests to humans. Flagging more than half of all volume naturally makes high recall easier.
+   * **26 Unnecessary Escalations (False Positives)**: Out of 113 escalated cases, 26 were safe troubleshooting queries where customer phrasing lacked keywords (e.g., *"facing problems with iPhone x contacted the customer care twice"*), falling to `unknown` intent and triggering human handoff.
+   * **The 6.45% Misses are High-Risk**: The 6 missed escalations were transactional order cancellation or double charge requests (e.g. `eval_gold_163`: *"I made a mistake and I ordered twice. how to cancel the first order"*), which received generic order-tracking links instead of commerce routing.
+2. **"43.5% Coverage" $\neq$ True Resolution (Solve Rate)**:
+   * Generating an automated reply does not guarantee customer problem resolution; many tweets simply request diagnostics or share a support link.
+   * Within the 43.5% auto-handled slice ($N=87$), 6 cases (6.90%) should have been escalated immediately to a human.
+3. **"100.0% Groundedness" is Guarded by Refusal**:
+   * The agent achieves 100% groundedness by refusing to generate when intent confidence is low or retrieval scores fall below threshold ($\tau = 0.05$).
+   * Grounding only verifies fidelity to the 2017 historical Twitter corpus; it does not ensure that 2017 temporary workarounds (e.g. iOS 11 text replacement bugs) represent valid 2026 AppleCare solutions.
+4. **"Retrieval MRR = 0.1000" Reflects Corpus Imbalance**:
+   * Dense + BM25 hybrid search frequently matches high-frequency iPhone troubleshooting documents even when the customer asks about Apple Watch or Mac, confirming that retrieval cannot act as a standalone lookup without entity filters.
+
+---
+
+## 3. Systematic Failure Analysis (Top 5 Real Failure Modes)
+
+All failure modes discovered on the test set are cataloged with concrete IDs and remediations in [`docs/failure_analysis.md`](docs/failure_analysis.md) and [`eval/results/final/failure_cases.jsonl`](eval/results/final/failure_cases.jsonl):
+
+* **FM-01: Transactional Order Modification False Auto-Handle (P0)**: Customer asked to cancel a duplicate order (`eval_gold_163`). Classifier accurately predicted `store_orders_shipping`, but escalation rules lacked action verbs for cancellations, outputting a generic tracking link. *Remediation: Add regex action triggers for transaction mutations.*
+* **FM-02: Multi-Intent Query Collapse (P2)**: Customer inquired about parental controls over in-app purchases (`eval_gold_054`). Single-label classifier collapsed the query to `app_store_billing_subscriptions`, missing security boundaries. *Remediation: Hierarchical intent routing.*
+* **FM-03: Conversational Underspecification Over-Escalation (P3)**: Vague phrasing without hardware symptoms (`eval_gold_015`) dropped classifier confidence below $\tau=0.55$, causing safe but inefficient human handoff. *Remediation: Autonomous clarification turn.*
+* **FM-04: Cross-Device Entity Drift in Retrieval (P2)**: Apple Watch S2 battery drain (`eval_gold_040`) retrieved iPhone Low Power Mode documentation due to dominant iPhone term frequencies. *Remediation: Device taxonomy entity filtering.*
+* **FM-05: Historical Workaround Deprecation Risk (P2)**: 2017 temporary workarounds for iOS 11 keyboard replacement bugs risk being served without freshness decay. *Remediation: Knowledge base temporal validity tagging.*
+
+---
+
+## 4. Complete Ablation Matrix (Validation Set)
+
+Evaluated across the held-out validation set ($N=1,500$ queries for escalation, $N=3,000$ for classification):
 
 | Configuration | Intent Macro-F1 | Coverage (Auto-Handle) | Escalation Recall | Groundedness (1-5) | Actionability (1-5) |
 |---|---|---|---|---|---|
@@ -51,68 +83,9 @@ Evaluated on the held-out **VALIDATION** partition ($N=1,500$ queries for escala
 | **F. RAG + Policy Escalation** | 0.8800 | 27.93% | 0.991 | 4.60 | 4.50 |
 | **G. Complete System (+ Evidence Checker)** | **0.8800** | **27.93%** | **0.991** | **4.80** | **4.60** |
 
-*Note: For detailed investigation of the 27.9% coverage tradeoff and Cohen's Kappa = 0.5455 agreement, see [`docs/phase2_empirical_audit.md`](docs/phase2_empirical_audit.md).*
-
-### 2.2 Multi-Stage Retrieval Comparison (30,000 Train Cases Indexed)
-| Strategy | Recall@1 | Recall@3 | Recall@5 | MRR |
-|---|---|---|---|---|
-| **R1. Lexical (BM25)** | 0.220 | 0.310 | 0.355 | 0.2700 |
-| **R2. Dense (Sublinear TF-IDF)** | 0.165 | 0.275 | 0.320 | 0.2236 |
-| **R3. Hybrid Fusion (RRF $k=60$)** | 0.190 | 0.300 | **0.360** | 0.2523 |
-| **R4. Hybrid + Cross-Encoder Reranker** | **0.210** | **0.335** | **0.360** | **0.2694** |
-
 ---
 
-## 3. Repository Structure
-
-```
-├── .gitignore                      # Excludes raw data and caches; tracks results
-├── pyproject.toml                  # Python package configuration
-├── .env.example                    # Environment variable templates (GEMINI_API_KEY)
-├── README.md                       # Reproducibility guide & benchmark overview
-├── src/
-│   ├── agent.py                    # Complete end-to-end support agent pipeline
-│   ├── reconstruction.py           # DAG conversation and path reconstruction
-│   ├── splitting.py                # Zero-leakage whole-conversation 4-way hashing
-│   ├── intent_classifier.py        # Calibrated intent classifier with fallback
-│   ├── baselines/                  # Majority, TF-IDF LogReg, and Semantic 1-NN models
-│   ├── cases/                      # ProcessedCase and ProcessedConversation schemas
-│   ├── retrieval/                  # BM25, Dense, RRF Hybrid, and Reranker suite
-│   ├── escalation/                 # Policy engine, decision schemas, and rule gates
-│   ├── generation/                 # Grounded generator and independent claim auditor
-│   ├── evaluation/                 # Automated SplitGuard disjointness validator
-│   └── llm/                        # Zero-dependency Gemini client with disk cache
-├── eval/
-│   ├── run_baselines.py            # Evaluates Baselines 0, 1, and 2 on validation set
-│   ├── run_classifier_eval.py      # Evaluates intent classifier and context ablation
-│   ├── run_retrieval_experiments.py# Benchmarks retrieval strategies R1–R4
-│   ├── run_threshold_sweep.py      # Confidence sweep for escalation threshold
-│   ├── run_agent_eval.py           # Core benchmark: LLM vs RAG, judge calibration
-│   ├── judge/                      # LLM-as-judge scoring rubric and pairwise evaluator
-│   └── results/                    # Machine-readable CSV and JSON benchmark results
-├── scripts/
-│   ├── inspect_data.py             # Memory-safe streaming profiler & SHA-256 calculator
-│   ├── select_brand.py             # Quantitative brand analysis & template scoring
-│   ├── prepare_cases.py            # Materializes cases and conversations into JSONL
-│   └── build_index.py              # Builds canonical retrieval index from train partition
-├── tests/
-│   ├── test_invariants.py          # Data integrity and split guard invariant tests
-│   ├── test_reconstruction.py      # Graph traversal, branching, and cycle tests
-│   └── test_splitting.py           # Deterministic split disjointness tests
-└── docs/
-    ├── phase2_empirical_audit.md   # Analysis of 27.9% coverage and Kappa=0.5455
-    ├── data_manifest.json          # Dataset provenance, SHA-256, row counts
-    ├── brand_selection.md          # 7-dimension scoring rubric & candidate rejection
-    ├── context_experiment.md       # Context ablation: C1 Query vs C2 Bounded vs C3 Full
-    ├── retrieval_experiments.md    # Multi-stage retrieval benchmarks
-    ├── escalation_threshold_selection.md # Threshold sweep and risk curve
-    ├── judge_validation.md         # LLM-as-judge calibration report
-    └── decision_log.md             # 15 substantive engineering and scientific decisions
-```
-
----
-
-## 4. Reproducibility in Under 15 Minutes
+## 5. Single-Command Reproducibility (< 2 Minutes)
 
 ### Step 1: Environment Setup
 Ensure Python 3.10+ is installed:
@@ -122,41 +95,30 @@ python -m venv .venv
 pip install -e ".[dev]"
 ```
 
-### Step 2: Run Invariant and Unit Tests
+### Step 2: Run All Invariant & Unit Tests
 ```powershell
 python -m pytest tests/ -v
 ```
-*(All 10 unit and invariant tests will pass in ~1.5 seconds).*
+*(All 12 invariant, schema, and split guard tests pass in ~1.5s).*
 
-### Step 3: Verify Split Disjointness
+### Step 3: Run the Official Unified Benchmark
 ```powershell
-python -c "from src.evaluation.split_guard import SplitGuard; SplitGuard().run_audit()"
+python scripts/run_final_evaluation.py
 ```
-*(Confirms 0 conversation, case, or tweet overlap across train, dev, val, and test).*
-
-### Step 4: Reproduce Benchmark Results
-Run each benchmark script deterministically:
-```powershell
-# 1. Run Baselines 0, 1, and 2 (~30s)
-python eval/run_baselines.py
-
-# 2. Run Intent Classifier evaluation & context ablation (~45s)
-python eval/run_classifier_eval.py
-
-# 3. Benchmark Retrieval Strategies R1–R4 (~1 min)
-python eval/run_retrieval_experiments.py
-
-# 4. Run Escalation Threshold Sweep (~40s)
-python eval/run_threshold_sweep.py
-
-# 5. Run Agent Evaluation Suite (~2 min)
-python eval/run_agent_eval.py
-```
+*(Verifies split guard disjointness across 81,767 cases, evaluates the quarantined test set $N=200$, computes $B=1,000$ bootstrap CIs, and prints the summary report in ~120s with zero external API dependencies).*
 
 ---
 
-## 5. Key Epistemic Principles Governing this Benchmark
-* **Response Coverage $\ne$ Solve Rate**: Outbound presence indicates response coverage, not business resolution.
-* **Historical Behavior $\ne$ Ground Truth**: Past support tweets reflect reference behavior, not infallible policy truth. We evaluate whether drafts are grounded in evidence, not whether they memorize 2017 tweets.
-* **Whole-Conversation Partitioning**: Strict zero tweet-level splitting. All turns belonging to a conversation DAG remain together.
-* **Separation of Intent from Escalation**: An intent can be completely clear while still requiring mandatory human escalation (e.g. account takeover, unauthorized charges).
+## 6. Key Documentation & Artifacts
+* **Audit & Methodology**:
+  * [`docs/phase3_audit.md`](docs/phase3_audit.md): Pre-implementation audit and remediation of circularity and split leakage.
+  * [`docs/annotation_quality.md`](docs/annotation_quality.md): Dual-annotator agreement study (Intent Kappa = 0.8742, Escalation Kappa = 0.6739).
+  * [`docs/final_leakage_audit.md`](docs/final_leakage_audit.md): Complete split leakage audit verifying 0 overlap across 81,767 cases.
+  * [`docs/experiment_registry.md`](docs/experiment_registry.md): Traceability matrix from EXP-DATA-01 to EXP-TEST-FINAL.
+  * [`docs/decision_log.md`](docs/decision_log.md): 20 substantive engineering decisions.
+* **Results & Failure Corpora**:
+  * [`docs/misleading_headlines.md`](docs/misleading_headlines.md): Critical analysis of headline metrics.
+  * [`docs/failure_analysis.md`](docs/failure_analysis.md): Top 5 real failure modes with root causes.
+  * [`eval/results/final/final_test_metrics.json`](eval/results/final/final_test_metrics.json): Machine-readable metrics.
+  * [`eval/results/final/confidence_intervals.json`](eval/results/final/confidence_intervals.json): 95% bootstrap confidence intervals.
+  * [`eval/results/final/failure_cases.jsonl`](eval/results/final/failure_cases.jsonl): Empirical failure case records.

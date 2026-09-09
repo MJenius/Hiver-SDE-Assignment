@@ -1,0 +1,23 @@
+{
+  "status": "PASSED",
+  "total_cases_audited": 81767,
+  "split_counts": {
+    "train": 57421,
+    "dev": 8037,
+    "val": 8344,
+    "test": 7965
+  },
+  "unique_conversations": {
+    "train": 35873,
+    "dev": 5127,
+    "val": 5175,
+    "test": 5036
+  },
+  "conversation_overlap": 0,
+  "case_overlap": 0,
+  "tweet_overlap": 0,
+  "golden_test_cases_audited": 200,
+  "golden_test_in_train_overlap": 0,
+  "golden_test_in_val_overlap": 0,
+  "integrity_enforced": true
+}
