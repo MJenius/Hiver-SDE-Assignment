@@ -1,0 +1,24 @@
+{
+  "llm_only_vs_rag": {
+    "llm_only": {
+      "groundedness": 3.533333333333333,
+      "actionability": 3.533333333333333,
+      "overall": 3.533333333333333
+    },
+    "rag": {
+      "groundedness": 3.4,
+      "actionability": 3.1333333333333333,
+      "overall": 3.25
+    }
+  },
+  "pairwise_comparison": {
+    "ai_win_rate": 0.0,
+    "historical_win_rate": 0.0,
+    "tie_rate": 1.0
+  },
+  "judge_validation": {
+    "exact_agreement": 0.8,
+    "pm1_agreement": 1.0,
+    "cohen_kappa": 0.5454545454545454
+  }
+}

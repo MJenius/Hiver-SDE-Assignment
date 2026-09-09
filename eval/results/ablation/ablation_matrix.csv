@@ -1,0 +1,8 @@
+Configuration,Intent Macro-F1,Coverage,Escalation Recall,Groundedness,Actionability
+A. Baseline 0 (Majority),0.0722,0.0,1.0,1.0,1.0
+B. Baseline 1 (TF-IDF LogReg),0.8546,0.0,1.0,2.2,2.1
+C. Baseline 2 (Semantic 1-NN),0.3838,0.45,0.62,2.8,2.7
+D. LLM-Only (Zero Retrieval),-,1.0,0.0,3.53,3.53
+E. RAG (No Escalation),0.88,1.0,0.0,3.4,3.13
+F. RAG + Policy Escalation,0.88,0.28,0.99,4.6,4.5
+G. Complete System (RAG + Escalation + Checker),0.88,0.28,0.99,4.8,4.6

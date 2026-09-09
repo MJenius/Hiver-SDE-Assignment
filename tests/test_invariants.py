@@ -78,3 +78,10 @@ def test_hard_candidates_invariants():
     for r in records:
         assert "ambiguity_type" in r
         assert r["ambiguity_type"] in ("multi_intent", "short", "context_dependent", "vague", "typo_heavy")
+def test_split_guard_enforcement():
+    from src.evaluation.split_guard import audit_case_splits
+    res = audit_case_splits("data/processed/cases.jsonl")
+    assert res["status"] == "PASSED"
+    assert res["conversation_overlap"] == 0
+    assert res["case_overlap"] == 0
+    assert res["tweet_overlap"] == 0

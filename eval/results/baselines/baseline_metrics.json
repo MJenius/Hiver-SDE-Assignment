@@ -1,0 +1,22 @@
+{
+  "evaluation_split": "validation",
+  "sample_size": 3000,
+  "baselines": {
+    "baseline_0_majority": {
+      "name": "Majority Class",
+      "accuracy": 0.5647,
+      "macro_f1": 0.0722,
+      "majority_intent": "unknown"
+    },
+    "baseline_1_tfidf_logreg": {
+      "name": "TF-IDF + Logistic Regression",
+      "accuracy": 0.9463,
+      "macro_f1": 0.8546
+    },
+    "baseline_2_nearest_neighbor": {
+      "name": "Semantic Nearest Neighbor Retrieval",
+      "accuracy": 0.637,
+      "macro_f1": 0.3838
+    }
+  }
+}

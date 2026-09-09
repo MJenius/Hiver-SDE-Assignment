@@ -1,0 +1,5 @@
+Retriever Architecture,Recall@1,Recall@3,Recall@5,MRR
+R1: BM25 Lexical,0.22,0.31,0.355,0.27
+R2: Dense Semantic,0.165,0.275,0.32,0.2236
+R3: Hybrid (BM25 + Dense),0.19,0.3,0.36,0.2523
+R4: Hybrid + Reranker,0.21,0.335,0.36,0.2694

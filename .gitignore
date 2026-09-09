@@ -5,6 +5,9 @@ data/
 *.parquet
 *.jsonl
 !eval/golden/annotations_template.csv
+!eval/results/**/*.csv
+!data/index_manifest.json
+!data/processed/split_manifest.json
 
 # Python
 __pycache__/

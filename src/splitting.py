@@ -2,7 +2,7 @@
 src/splitting.py
 Reusable, leakage-safe dataset splitting utilities.
 Guarantees whole-conversation isolation: all cases and turns belonging to a conversation_id
-are strictly assigned to exactly one partition (Train, Dev, Golden Candidate, or Hard Candidate).
+are strictly assigned to exactly one partition (train, dev, val, or test).
 """
 
 import hashlib
@@ -14,38 +14,45 @@ def get_conversation_hash(conversation_id: str, seed: int = 42) -> float:
     """
     key = f"{seed}_{conversation_id}".encode("utf-8")
     hex_digest = hashlib.sha256(key).hexdigest()
-    # Use first 8 hex characters (32-bit int)
     int_val = int(hex_digest[:8], 16)
     return int_val / 0xFFFFFFFF
 
 def partition_conversations(
     conversation_ids: List[str],
-    train_ratio: float = 0.80,
+    train_ratio: float = 0.70,
     dev_ratio: float = 0.10,
+    val_ratio: float = 0.10,
     test_ratio: float = 0.10,
     seed: int = 42
 ) -> Dict[str, List[str]]:
     """
-    Partitions conversation IDs into disjoint subsets using deterministic hashing.
+    Partitions conversation IDs into 4 disjoint subsets using deterministic hashing.
     Ensures 0% conversation-level leakage across splits.
+    Notice test_ratio occupies [1.0 - test_ratio, 1.0), maintaining compatibility
+    with Phase 1's test split threshold of 0.90!
     """
-    assert abs(train_ratio + dev_ratio + test_ratio - 1.0) < 1e-6, "Split ratios must sum to 1.0"
+    total_ratio = train_ratio + dev_ratio + val_ratio + test_ratio
+    assert abs(total_ratio - 1.0) < 1e-6, "Split ratios must sum to 1.0"
     
     splits = {
         "train": [],
         "dev": [],
+        "val": [],
         "test": []
     }
     
     dev_threshold = train_ratio
-    test_threshold = train_ratio + dev_ratio
+    val_threshold = train_ratio + dev_ratio
+    test_threshold = train_ratio + dev_ratio + val_ratio
 
     for c_id in sorted(conversation_ids):
         h = get_conversation_hash(c_id, seed)
         if h < dev_threshold:
             splits["train"].append(c_id)
-        elif h < test_threshold:
+        elif h < val_threshold:
             splits["dev"].append(c_id)
+        elif h < test_threshold:
+            splits["val"].append(c_id)
         else:
             splits["test"].append(c_id)
             

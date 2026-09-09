@@ -1,0 +1,75 @@
+{
+  "app_store_billing_subscriptions": {
+    "precision": 0.7692307692307693,
+    "recall": 0.5555555555555556,
+    "f1-score": 0.6451612903225806,
+    "support": 54.0
+  },
+  "apple_id_account_security": {
+    "precision": 0.620253164556962,
+    "recall": 0.6901408450704225,
+    "f1-score": 0.6533333333333333,
+    "support": 71.0
+  },
+  "audio_music_media": {
+    "precision": 0.76,
+    "recall": 0.6333333333333333,
+    "f1-score": 0.6909090909090909,
+    "support": 60.0
+  },
+  "battery_performance": {
+    "precision": 0.8076923076923077,
+    "recall": 0.7664233576642335,
+    "f1-score": 0.7865168539325843,
+    "support": 137.0
+  },
+  "connectivity_wifi_bluetooth": {
+    "precision": 0.6506024096385542,
+    "recall": 0.8571428571428571,
+    "f1-score": 0.7397260273972602,
+    "support": 63.0
+  },
+  "hardware_screen_physical": {
+    "precision": 0.7352941176470589,
+    "recall": 0.684931506849315,
+    "f1-score": 0.7092198581560284,
+    "support": 146.0
+  },
+  "icloud_sync_storage": {
+    "precision": 0.6883116883116883,
+    "recall": 0.6708860759493671,
+    "f1-score": 0.6794871794871795,
+    "support": 79.0
+  },
+  "os_update_issues": {
+    "precision": 0.6600418410041841,
+    "recall": 0.9460269865067467,
+    "f1-score": 0.7775723967960567,
+    "support": 667.0
+  },
+  "store_orders_shipping": {
+    "precision": 0.5,
+    "recall": 0.41379310344827586,
+    "f1-score": 0.4528301886792453,
+    "support": 29.0
+  },
+  "unknown": {
+    "precision": 0.9193548387096774,
+    "recall": 0.7739079102715466,
+    "f1-score": 0.8403846153846154,
+    "support": 1694.0
+  },
+  "accuracy": 0.7943333333333333,
+  "macro avg": {
+    "precision": 0.7110781136791202,
+    "recall": 0.6992141531791654,
+    "f1-score": 0.6975140834397975,
+    "support": 3000.0
+  },
+  "weighted avg": {
+    "precision": 0.818894267820053,
+    "recall": 0.7943333333333333,
+    "f1-score": 0.7965484865266322,
+    "support": 3000.0
+  }
+}
