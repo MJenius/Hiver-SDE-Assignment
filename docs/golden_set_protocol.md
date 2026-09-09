@@ -1,11 +1,13 @@
-﻿# Golden Evaluation Set Protocol & Annotation Guidelines
+# Golden Evaluation Set Protocol & Benchmark Specification
 
 ## 1. Objective & Design Philosophy
-The Golden Evaluation Set (`eval/golden/`) serves as the definitive benchmark for the AI Customer Support Agent.
-To prevent misleading headline numbers:
-1. **No Tuning on Golden Data**: The golden set is strictly quarantined. Model weights, prompts, and retrieval indices must never touch or fit to these examples.
-2. **Stratified & Balanced Sampling**: The set is deliberately curated across all 10 intent categories, length profiles, and difficulty tiers.
-3. **Target Size**: Exactly 200 high-quality evaluation examples.
+The Golden Evaluation Set (`eval/golden/final/golden_test.jsonl`) serves as the definitive held-out test benchmark for the AI Customer Support Agent.
+
+To ensure empirical credibility and avoid common evaluation pitfalls:
+1. **Quarantined Test Set**: The golden test set is drawn strictly from the held-out `test` partition (`split == "test"`). Model weights, prompts, and retrieval indices never access or fit to these examples.
+2. **Stratified Representation**: The set is deliberately curated across all 10 intent categories, length profiles, and difficulty tiers.
+3. **Target Size**: Exactly 200 evaluation examples.
+4. **Policy-Adjudicated Benchmark Targets**: The evaluation fields (`intent`, `should_escalate`, `evidence_sufficient`) represent programmatically adjudicated policy benchmark targets derived from candidate intent heuristics and domain safety rules, rather than verified manual human annotations.
 
 ---
 
@@ -25,7 +27,7 @@ The 200 examples are drawn from the test partition of reconstructed two-sided Ap
 
 ---
 
-## 3. Golden Label Schema Specification
+## 3. Evaluation Schema Specification
 
 Every golden evaluation record conforms to the following schema:
 
@@ -36,17 +38,18 @@ Every golden evaluation record conforms to the following schema:
 | `conversation_id` | str | String | Conversation DAG ID (enforcing whole-conversation split). |
 | `customer_message` | str | String | Customer utterance requiring AI handling. |
 | `preceding_context` | str | String / Empty | Chronologically formatted previous turns in thread. |
-| `intent` | str | Enum (10 taxonomy IDs) | Primary ground-truth operational intent. |
-| `should_escalate` | bool | `True` / `False` | Ground-truth decision on human escalation requirement. |
+| `intent` | str | Enum (10 taxonomy IDs) | Primary policy-adjudicated benchmark intent target. |
+| `should_escalate` | bool | `True` / `False` | Policy-adjudicated benchmark escalation target. |
 | `escalation_reason` | str | String / Null | Operational justification if escalated (e.g., `requires_authenticated_access`, `hardware_damage_repair`, `sentiment_crisis`). |
 | `evidence_sufficient` | str | `yes` \| `no` \| `uncertain` | Whether historical precedents provide adequate evidence to resolve the query safely. |
 | `ambiguity_type` | str | `none` \| `vague` \| `multi_intent` \| `short` \| `context_dependent` \| `typo_heavy` | Structural ambiguity classification. |
-| `notes` | str | String | Annotator rationale and boundary notes. |
+| `reference_historical_response` | str | String | Reference historical agent response from Twitter dataset. |
+| `notes` | str | String | Benchmark adjudication notes and boundary metadata. |
 
 ---
 
-## 4. Annotation Quality & Agreement Protocol
-To ensure high annotation reliability and prevent individual bias:
+## 4. Proposed Human-in-the-Loop Scaling Protocol
+For future production deployment requiring full biological human verification:
 1. **Intra-Annotator Consistency Check**:
    * An initial batch of 40 examples is annotated.
    * After a 48-hour washout period, the same 40 examples are re-annotated blindly without viewing initial labels.
@@ -54,4 +57,4 @@ To ensure high annotation reliability and prevent individual bias:
      $$\kappa = \frac{P_o - P_e}{1 - P_e}$$
    * Target threshold: $\kappa \ge 0.80$ (substantial agreement).
 2. **Guideline Refinement Loop**: Any disagreement during the test check triggers an explicit refinement of `configs/intents.yaml` inclusion/exclusion criteria.
-3. **Independent Adjudication**: If secondary human annotators are available, conflicting annotations are adjudicated by senior consensus rather than majority vote.
+3. **Independent Adjudication**: When secondary human annotators are onboarded, conflicting annotations are adjudicated by senior consensus rather than majority vote.

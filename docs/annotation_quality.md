@@ -1,14 +1,27 @@
-# Annotation Quality Protocol & Dual-Annotator Agreement Report
+# Annotation Protocol & Simulation / Calibration Study
 
-## 1. Annotation Protocol & Operational Rubric
+## 1. Provenance & Implementation Disclosure
 
-To establish the Final Golden Test Set (`eval/golden/final/golden_test.jsonl`), 200 held-out cases from the test split (`split == "test"`) were curated. 
+To maintain strict epistemic integrity, this document explicitly delineates between what is **currently implemented in code/artifacts** versus the **proposed human-annotation protocol** designed for future human-in-the-loop scaling.
 
-> [!IMPORTANT]
-> **Provenance Clarification**: In the current automated test artifact, benchmark targets (`intent`, `should_escalate`, `evidence_sufficient`) were programmatically populated using candidate intent heuristics and domain risk rules. They serve as an automated policy-benchmark target rather than manual human ground truth. Below is the formal protocol established for evaluating agreement and risk boundaries.
+### 1.1 Implemented Evidence (Current Repository State)
+* **Quarantined Benchmark Targets**: Exactly 200 evaluation targets in `eval/golden/final/golden_test.jsonl` sampled from the held-out `test` partition (`split == "test"`).
+* **Programmatic Policy Adjudication**: Targets (`intent`, `should_escalate`, `evidence_sufficient`) were programmatically derived from candidate intent heuristics and domain risk policy rules over customer inquiries, rather than produced by biological human annotators.
+* **Benchmark Purpose**: Measures internal consistency, conservative escalation recall, and retrieval grounding under fixed operational assumptions.
 
-### 1.1 Intent Taxonomy Decision Boundaries
-Annotators map inquiries to the primary underlying issue according to `configs/intents.yaml`:
+### 1.2 Proposed Human-Annotation Protocol (Production Roadmap)
+* **Dual-Annotator Coverage**: Stratified 50-case overlap with independent blind labeling.
+* **Agreement Scoring**: Formalized Cohen’s Kappa ($\kappa \ge 0.80$) thresholding to validate inter-rater reliability.
+* **Consensus Adjudication**: Two-tier adjudication resolving taxonomy boundary disputes before deploying models.
+
+---
+
+## 2. Operational Rubric Specification
+
+The benchmark targets are structured around the following operational boundaries:
+
+### 2.1 Intent Taxonomy Decision Boundaries
+Inquiries map to the primary underlying issue according to `configs/intents.yaml`:
 1. `os_update_issues`: OS installation failures, verification hangs, post-update glitches (e.g. keyboard autocorrect bugs, UI overlap).
 2. `battery_performance`: Unusually rapid drainage, device overheating, sudden shutdowns at percentage > 10%, slow charging.
 3. `apple_id_account_security`: Forgotten credentials, account locked, 2FA codes not received, Activation Lock on secondhand devices, phishing verification.
@@ -20,42 +33,37 @@ Annotators map inquiries to the primary underlying issue according to `configs/i
 9. `store_orders_shipping`: Apple Online Store order status, shipping carrier delivery delays, trade-in kit delivery, physical retail Genius Bar appointments.
 10. `unknown`: Greetings ("hey"), unstructured complaints ("apple sucks"), ambient noise, multi-sentence fragments, non-English text without technical specifics.
 
-### 1.2 Escalation Labeling Criteria (`should_escalate`)
-The benchmark adjudication defines escalation necessity based on whether the issue requires human operational intervention, decoupled from classifier prediction confidence:
+### 2.2 Escalation Criteria (`should_escalate`)
+Defines escalation necessity based on whether the issue requires human operational intervention, decoupled from classifier prediction confidence:
 * `True`: Inquiries requiring private authenticated verification (Apple ID reset, password recovery, activation lock), credit card/financial lookup, physical hardware diagnostics/mail-in repair, or complex legal/safety escalations.
 * `False`: Standard self-service troubleshooting where public technical steps (reboot, toggle settings, reset network settings, delete/reinstall app) are standard procedure.
 
-### 1.3 Evidence Sufficiency (`evidence_sufficient`)
+### 2.3 Evidence Sufficiency (`evidence_sufficient`)
 * `yes`: The inquiry contains enough device/symptom context for historical precedent to formulate a concrete diagnostic reply.
 * `no`: The inquiry provides zero diagnostic information (e.g. "it doesn't work", "help", single-word turns).
 * `uncertain`: Partial information where diagnostic questions are necessary before resolution.
 
 ---
 
-## 2. Dual-Annotator Calibration & Agreement Study
+## 3. Protocol Calibration & Target Agreement Benchmarks
 
+To guide real annotator onboarding in production, we established target consistency thresholds across categorical dimensions:
 
-To measure label reliability, a stratified subset of **50 golden cases** was independently annotated by two annotators (`annotator_1` and `annotator_2`) across categorical fields:
-* **Intent** (10 nominal classes)
-* **Escalation Requirement** (binary: `True` / `False`)
-* **Evidence Sufficiency** (3 categories: `yes` / `no` / `uncertain`)
-
-### 2.1 Agreement Metrics
-
-| Annotation Dimension | Raw Agreement (%) | Cohen's Kappa ($\kappa$) | Standard Classification | Primary Disagreement Driver |
+| Annotation Dimension | Target Raw Agreement (%) | Target Cohen's Kappa ($\kappa$) | Target Agreement Class | Anticipated Boundary Driver |
 |---|---|---|---|---|
-| **Operational Intent** | **94.0%** (47 / 50) | **0.933** | Almost Perfect Agreement | Multi-intent queries (e.g., iOS 11 update causing battery drain). Resolved via primary root symptom. |
-| **Escalation (`should_escalate`)** | **92.0%** (46 / 50) | **0.828** | Almost Perfect Agreement | Borderline hardware vs. software screen freeze (e.g., touch unresponsive after drop vs update). |
-| **Evidence Sufficiency** | **88.0%** (44 / 50) | **0.784** | Substantial Agreement | Differing thresholds on whether asking for iOS version constitutes sufficient evidence. |
+| **Operational Intent** | **$\ge$ 90.0%** | **$\kappa \ge 0.80$** | Substantial / Near-Perfect | Multi-intent compound inquiries (e.g., iOS 11 update causing battery drain). Prioritize direct functional breakdown. |
+| **Escalation (`should_escalate`)** | **$\ge$ 88.0%** | **$\kappa \ge 0.75$** | Substantial Agreement | Borderline hardware vs. software screen freeze (e.g., touch unresponsive after drop vs update). |
+| **Evidence Sufficiency** | **$\ge$ 85.0%** | **$\kappa \ge 0.70$** | Substantial Agreement | Differing thresholds on whether asking for iOS version constitutes sufficient evidence. |
 
-### 2.2 Analysis of Disagreements & Consensus Adjudication
-1. **Case `eval_gold_020`**: User complained that an iOS update was causing Bluetooth to drop.
-   - *Annotator 1*: `connectivity_wifi_bluetooth` (focal symptom).
-   - *Annotator 2*: `os_update_issues` (antecedent cause).
-   - *Adjudication*: Prioritize the direct functional breakdown (`connectivity_wifi_bluetooth`) because troubleshooting requires Bluetooth resetting rather than OS re-installation.
-2. **Case `eval_gold_089`**: User reported a screen that won't wake up after an update.
-   - *Annotator 1*: Escalated (`hardware_screen_physical`).
-   - *Annotator 2*: Not escalated (`os_update_issues`), suggesting DFU restore.
-   - *Adjudication*: Labeled `should_escalate=True` because physical unresponsiveness risks hardware failure and customer frustration if software restore fails.
+### 3.1 Simulated Adjudication Walkthrough (Reference Cases)
+To illustrate how the protocol resolves ambiguous cases:
+1. **Compound Inquiry (e.g., Case `eval_gold_020`)**: User complains that an iOS update caused Bluetooth audio to drop.
+   * *Option A*: `connectivity_wifi_bluetooth` (focal functional symptom).
+   * *Option B*: `os_update_issues` (antecedent trigger).
+   * *Adjudication Rule*: Prioritize the direct functional breakdown (`connectivity_wifi_bluetooth`) because initial troubleshooting requires Bluetooth resetting rather than OS reinstallation.
+2. **Screen Unresponsiveness (e.g., Case `eval_gold_089`)**: User reports a screen that won't wake up after an update.
+   * *Option A*: Escalated (`hardware_screen_physical`).
+   * *Option B*: Not escalated (`os_update_issues`), suggesting DFU restore.
+   * *Adjudication Rule*: Adjudicate as `should_escalate=True` because physical unresponsiveness risks underlying hardware failure and customer churn if self-service software restore fails.
 
-All final consensus records are archived in `eval/golden/final/golden_test.jsonl` with agreement metadata.
+All 50 reference calibration examples are recorded in `eval/golden/annotations/dual_annotation_50.jsonl` as reference calibration data.
