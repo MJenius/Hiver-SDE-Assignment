@@ -22,9 +22,9 @@ This ledger records every empirical experiment, benchmark evaluation, and headli
 | **EXP-RETR-R4** | R4 Hybrid + Cross-Encoder Rerank | `45d0b51` | `cd297fcfa1bf...` | Index: `train` ($30k$) | 200 | MRR / Recall@5 | 0.2694 / 0.3600 | [0.2405, 0.2983] | `python eval/run_retrieval_experiments.py` |
 | **EXP-ESC-SWEEP** | Threshold Sweep ($\tau = 0.55$) | `45d0b51` | `cd297fcfa1bf...` | `validation` | 1,500 | Recall / Coverage | 99.12% / 27.93% | [98.6%, 99.6%] | `python eval/run_threshold_sweep.py` |
 | **EXP-AGENT-01** | LLM-Only vs RAG Generation | `1dfb39f` | `cd297fcfa1bf...` | `validation` | 15 | Groundedness (1-5) | 3.40 (RAG) vs 3.53 | [3.10, 3.70] | `python eval/run_agent_eval.py` |
-| **EXP-JUDGE-01** | LLM Judge vs Human Calibration | `1dfb39f` | `cd297fcfa1bf...` | `validation` | 15 | Cohen's Kappa | 0.5455 (Moderate) | [0.32, 0.77] | `python eval/run_agent_eval.py` |
-| **EXP-ANN-01** | Dual-Annotator Golden Test Audit | `78f2619` | `cd297fcfa1bf...` | `test` | 50 | Intent Kappa / Agreement | 0.8742 / 92.0% | [0.76, 0.98] | `python -c "from sklearn.metrics..."` |
-| **EXP-TEST-FINAL** | Official Final Golden Test Eval | Current | `cd297fcfa1bf...` | Quarantined `test` | 200 | Full Pipeline F1/Recall | Final Execution | Bootstrap CIs ($B=1000$) | `python eval/run_final_test_eval.py` |
+| **EXP-ANN-01** | Dual-Annotator Agreement Protocol | `78f2619` | `cd297fcfa1bf...` | `test` | 50 | Intent Kappa / Agreement | 0.8742 / 92.0% | [0.76, 0.98] | `eval/golden/annotations/` |
+| **EXP-TEST-FINAL** | Quarantined Policy Benchmark Eval | `3a6baec` | `cd297fcfa1bf...` | Quarantined `test` | 200 | Policy-Adjudicated Benchmark | Macro-F1: 0.8668, Recall: 0.9355 | Bootstrap CIs ($B=1000$) | `python scripts/run_final_evaluation.py` |
+
 
 ---
 

@@ -2,7 +2,10 @@
 
 ## 1. Annotation Protocol & Operational Rubric
 
-To ensure the Final Golden Test Set (`eval/golden/final/golden_test.jsonl`) provides an uncompromised, objective evaluation standard, all 200 cases were curated and labeled under strict operational guidelines, deliberately separated from model policies.
+To establish the Final Golden Test Set (`eval/golden/final/golden_test.jsonl`), 200 held-out cases from the test split (`split == "test"`) were curated. 
+
+> [!IMPORTANT]
+> **Provenance Clarification**: In the current automated test artifact, benchmark targets (`intent`, `should_escalate`, `evidence_sufficient`) were programmatically populated using candidate intent heuristics and domain risk rules. They serve as an automated policy-benchmark target rather than manual human ground truth. Below is the formal protocol established for evaluating agreement and risk boundaries.
 
 ### 1.1 Intent Taxonomy Decision Boundaries
 Annotators map inquiries to the primary underlying issue according to `configs/intents.yaml`:
@@ -18,7 +21,7 @@ Annotators map inquiries to the primary underlying issue according to `configs/i
 10. `unknown`: Greetings ("hey"), unstructured complaints ("apple sucks"), ambient noise, multi-sentence fragments, non-English text without technical specifics.
 
 ### 1.2 Escalation Labeling Criteria (`should_escalate`)
-**CRITICAL**: `should_escalate` is labeled independently based on whether the issue requires human operational intervention, **NOT** derived from the automated classifier or escalation policy rules:
+The benchmark adjudication defines escalation necessity based on whether the issue requires human operational intervention, decoupled from classifier prediction confidence:
 * `True`: Inquiries requiring private authenticated verification (Apple ID reset, password recovery, activation lock), credit card/financial lookup, physical hardware diagnostics/mail-in repair, or complex legal/safety escalations.
 * `False`: Standard self-service troubleshooting where public technical steps (reboot, toggle settings, reset network settings, delete/reinstall app) are standard procedure.
 
@@ -30,6 +33,7 @@ Annotators map inquiries to the primary underlying issue according to `configs/i
 ---
 
 ## 2. Dual-Annotator Calibration & Agreement Study
+
 
 To measure label reliability, a stratified subset of **50 golden cases** was independently annotated by two annotators (`annotator_1` and `annotator_2`) across categorical fields:
 * **Intent** (10 nominal classes)

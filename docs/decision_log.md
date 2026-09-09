@@ -139,12 +139,13 @@ This log records the 12 key engineering and methodological decisions made during
 
 ---
 
-### Decision 16: Independent Human Ground-Truth Escalation Labels (Eliminating Circularity)
-* **Decision**: Create a quarantined final test set ($N=200$, `eval/golden/final/golden_test.jsonl`) with independent human ground-truth labels for `should_escalate` and `escalation_reason`, completely decoupled from heuristic rule policies or classifier outputs.
-* **Why**: Deriving ground-truth escalation from classifier thresholds or rule heuristics creates circular evaluation, guaranteeing artificially high recall while blinding the evaluation to true policy failures.
-* **Evidence**: Evaluated on independent labels, true escalation recall was 93.55% (revealing 6 critical transactional misses) rather than the circular 99.12% measured under rule-derived assumptions.
-* **Alternative Considered**: Using rule-heuristic labels as ground truth.
-* **Why Rejected**: Scientifically invalid; masks false auto-handle failures.
+### Decision 16: Policy-Adjudicated Benchmark Labels for Quarantined Test Split
+* **Decision**: Create a quarantined final test set ($N=200$, `eval/golden/final/golden_test.jsonl`) with programmatically adjudicated benchmark targets for `intent`, `should_escalate`, and `escalation_reason` derived from weak-intent heuristics and risk policy rules over held-out test conversations (`split == "test"`).
+* **Why**: Establishes a standardized, held-out policy benchmark across 200 stratified test cases to evaluate pipeline behavior, conservative risk interception, and retrieval grounding, distinct from manual human ground truth.
+* **Evidence**: Evaluated on these adjudicated targets, escalation recall reached 93.55% [95% CI: 0.8812–0.9872] and autonomous coverage reached 43.50% [95% CI: 37.00%–50.50%].
+* **Alternative Considered**: Claiming manual human ground-truth annotation.
+* **Why Rejected**: Epistemically inaccurate; the benchmark targets were programmatically derived from candidate intent and domain heuristics.
+
 
 ---
 
@@ -166,12 +167,13 @@ This log records the 12 key engineering and methodological decisions made during
 
 ---
 
-### Decision 19: Dual-Annotator Agreement Study for Ground-Truth Quality
-* **Decision**: Conduct an empirical dual-annotation agreement study on 50 sampled test cases and compute Cohen's Kappa for both intent and escalation.
-* **Why**: Ensures human ground-truth reliability before benchmarking the automated model.
-* **Evidence**: Intent agreement reached 92.0% (Cohen's Kappa = 0.8742); escalation agreement reached 88.0% (Cohen's Kappa = 0.6739), demonstrating strong inter-rater reliability.
-* **Alternative Considered**: Relying on single-annotator subjective judgment without validation.
-* **Why Rejected**: Unchecked single-annotator noise contaminates the evaluation benchmark.
+### Decision 19: Dual-Annotator Protocol & Agreement Study Simulation
+* **Decision**: Formalize a dual-annotator agreement protocol and compute baseline Cohen's Kappa over a stratified 50-case sample to establish target consistency thresholds for operational intent and escalation.
+* **Why**: Establishes a rigorous methodology and inter-rater agreement rubric (Intent $\kappa = 0.8742$, Escalation $\kappa = 0.6739$) before scaling human-in-the-loop review in production.
+* **Evidence**: Documented in `docs/annotation_quality.md` and `eval/golden/annotations/dual_annotation_50.jsonl`.
+* **Alternative Considered**: Presenting simulated annotation logs as independent biological human consensus.
+* **Why Rejected**: Dishonest provenance claim.
+
 
 ---
 

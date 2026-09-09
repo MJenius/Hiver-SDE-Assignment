@@ -11,8 +11,8 @@
 
 ## Executive Summary
 
-This report documents the final evaluation of an autonomous customer support agent for `@AppleSupport`. Moving beyond exploratory prototypes and self-referential heuristic metrics, Phase 3 establishes an empirically hardened benchmark governed by five strict principles:
-1. **Zero Circularity**: Ground-truth escalation labels (`should_escalate`) are independently adjudicated by humans, completely decoupled from classifier thresholds or rule heuristics.
+This report documents the final evaluation of an autonomous customer support agent for `@AppleSupport`. Moving beyond exploratory prototypes and self-referential metrics, Phase 3 establishes an empirically hardened benchmark governed by five strict principles:
+1. **Clear Provenance Disclosure**: Evaluation targets in `golden_test.jsonl` are programmatically adjudicated benchmark labels derived from weak-intent heuristics and risk policy rules over held-out test conversations (`split == "test"`), rather than fully independent manual human annotations. These metrics measure conservative policy-benchmark consistency and risk interception.
 2. **Strict Test Partition Quarantine**: The final test set ($N=200$) was sampled from the held-out `test` partition, verified to have zero conversation or tweet overlap with training/validation sets, and evaluated exactly once without post-hoc tuning.
 3. **Statistical Uncertainty**: All headline metrics report empirical 95% Bootstrap Confidence Intervals ($B=1,000$ resamples, seed=42).
 4. **Epistemic Honesty**: We rigorously distinguish automated response coverage from genuine problem resolution, and transparently analyze what is misleading about our headline figures.
@@ -24,15 +24,16 @@ This report documents the final evaluation of an autonomous customer support age
 
 | Component / Subsystem | Metric | Point Estimate | 95% Bootstrap Confidence Interval | Standard Error | Benchmark Basis |
 |---|---|---|---|---|---|
-| **Intent Classification** | Accuracy | **0.8450** | [0.7950, 0.8950] | 0.0255 | 10-class human consensus |
+| **Intent Classification** | Accuracy | **0.8450** | [0.7950, 0.8950] | 0.0255 | Adjudicated candidate intent (10 classes) |
 | | Macro-F1 | **0.8668** | [0.8228, 0.9047] | 0.0215 | Unweighted mean across 10 classes |
-| **Escalation Policy** | Escalation Recall | **0.9355** | [0.8812, 0.9872] | 0.0272 | Independent human escalation necessity |
-| | Escalation Precision | **0.7699** | [0.6893, 0.8500] | 0.0409 | Human escalation requirement |
+| **Escalation Policy** | Escalation Recall | **0.9355** | [0.8812, 0.9872] | 0.0272 | Policy-adjudicated escalation target |
+| | Escalation Precision | **0.7699** | [0.6893, 0.8500] | 0.0409 | Escalation target alignment |
 | | Escalation F1 | **0.8447** | [0.7861, 0.8959] | 0.0280 | Harmonic mean |
 | | Autonomous Coverage | **43.50%** | [37.00%, 50.50%] | 0.0350 | Automated outbound replies ($N=87$) |
-| | False Auto-Handle Rate (FAHR) | **6.90%** | [2.30%, 12.64%] | 0.0273 | Erroneously auto-handled ($N=6$) |
-| **Multi-Stage Retrieval** | Top-5 MRR | **0.1000** | [0.0600, 0.1400] | 0.0204 | Ground-truth intent match |
+| | False Auto-Handle Rate (FAHR) | **6.90%** | [2.30%, 12.64%] | 0.0273 | Adjudicated risk handoffs missed ($N=6 / 87$) |
+| **Multi-Stage Retrieval** | Top-5 MRR | **0.1000** | [0.0600, 0.1400] | 0.0204 | Target intent category match |
 | **Claim Grounding** | Groundedness Rate | **100.00%** | [100.00%, 100.00%] | 0.0000 | Verified against retrieved evidence |
+
 
 ---
 

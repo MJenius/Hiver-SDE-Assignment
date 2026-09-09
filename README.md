@@ -18,23 +18,27 @@ The system combines:
 
 ## 1. Official Final Benchmark Results (Quarantined Test Set, $N=200$)
 
-The agent was frozen in [`configs/final_eval.yaml`](configs/final_eval.yaml) and evaluated **exactly once** on the quarantined, held-out test set (`eval/golden/final/golden_test.jsonl`, $N=200$) with independent human ground truth labels for intent, escalation necessity, and evidence sufficiency.
+The agent was frozen in [`configs/final_eval.yaml`](configs/final_eval.yaml) and evaluated **exactly once** on the quarantined, held-out test set (`eval/golden/final/golden_test.jsonl`, $N=200$). 
+
+> [!NOTE]
+> **Dataset & Annotation Provenance Disclosure**: The 200 evaluation targets in `golden_test.jsonl` are programmatically adjudicated benchmark labels derived from weak-intent heuristics and policy rules over held-out test conversations (`split == "test"`), rather than fully independent manual human annotations. Metrics should be interpreted strictly as an automated policy-adjudicated benchmark evaluating pipeline consistency and risk interception, not as validated human ground truth.
 
 All metrics are reported with empirical 95% Bootstrap Confidence Intervals ($B=1,000$, seed=42):
 
-| Component / Metric | Point Estimate | 95% Bootstrap Confidence Interval | Evaluation Ground Truth |
+| Component / Metric | Point Estimate | 95% Bootstrap Confidence Interval | Evaluation Target Basis |
 |---|---|---|---|
-| **Intent Accuracy** | **0.8450** | [0.7950, 0.8950] | Human consensus (10 classes) |
-| **Intent Macro-F1** | **0.8668** | [0.8228, 0.9047] | Human consensus (10 classes) |
-| **Escalation Recall** | **0.9355** | [0.8812, 0.9872] | Independent human escalation label |
-| **Escalation Precision** | **0.7699** | [0.6893, 0.8500] | Independent human escalation label |
-| **Escalation F1** | **0.8447** | [0.7861, 0.8959] | Independent human escalation label |
-| **Autonomous Coverage** | **43.50%** | [37.00%, 50.50%] | Full pipeline decision |
-| **False Auto-Handle Rate (FAHR)** | **6.90%** | [2.30%, 12.64%] | Human risk adjudication ($N=87$ handled) |
-| **Retrieval Top-5 MRR** | **0.1000** | [0.0600, 0.1400] | Ground-truth intent match |
-| **Claim Groundedness** | **100.00%** | [100.00%, 100.00%] | Independent evidence checker |
+| **Intent Accuracy** | **0.8450** | [0.7950, 0.8950] | Adjudicated candidate intent (10 classes) |
+| **Intent Macro-F1** | **0.8668** | [0.8228, 0.9047] | Adjudicated candidate intent (10 classes) |
+| **Escalation Recall** | **0.9355** | [0.8812, 0.9872] | Policy-adjudicated escalation targets |
+| **Escalation Precision** | **0.7699** | [0.6893, 0.8500] | Policy-adjudicated escalation targets |
+| **Escalation F1** | **0.8447** | [0.7861, 0.8959] | Harmonic mean |
+| **Autonomous Coverage** | **43.50%** | [37.00%, 50.50%] | Full pipeline autonomous decision |
+| **False Auto-Handle Rate (FAHR)** | **6.90%** | [2.30%, 12.64%] | Adjudicated risk handoffs missed ($N=6 / 87$) |
+| **Retrieval Top-5 MRR** | **0.1000** | [0.0600, 0.1400] | Target intent category match |
+| **Claim Groundedness** | **100.00%** | [100.00%, 100.00%] | Independent evidence checker verification |
 
-*Note: All results are machine-reproducible in under 2 minutes via `python scripts/run_final_evaluation.py`.*
+*Explicit Disclosure: These figures represent conservative policy-benchmark results, not true resolution rates.*
+
 
 ---
 
