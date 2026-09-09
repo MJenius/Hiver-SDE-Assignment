@@ -47,11 +47,14 @@ The 27.9% coverage is not a proven mathematical limit or theoretical ceiling. Ra
 
 ## 2. Honest Audit of Cohen's Kappa = 0.5455
 
-### 2.1 The Number: Moderate Agreement, Not Strong Validation
+> [!NOTE]
+> **Provenance & Simulation Disclosure**: As established in Phase 3 audits, this calibration metric was generated via a programmatic perturbation simulation over automated judge outputs in `eval/run_agent_eval.py` to test agreement scoring math, rather than measured biological human ratings. It is analyzed here to understand rubric boundary discrepancies.
+
+### 2.1 The Number: Moderate Agreement Simulation
 In our LLM-as-judge calibration run:
 * **Exact Score Agreement**: 80.0%
 * **Agreement within $\pm 1$ Band**: 100.0%
-* **Cohen's Kappa ($\kappa$)**: **0.5455**
+* **Simulation Cohen's Kappa ($\kappa$)**: **0.5455**
 
 By standard biostatistics and NLP guidelines (Landis & Koch, 1977), $\kappa \in [0.41, 0.60]$ is classified as **Moderate Agreement** (not "strong" or "near-perfect"). Claiming 0.5455 is strong agreement is misleading spin.
 
