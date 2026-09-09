@@ -109,3 +109,30 @@ This log records the 12 key engineering and methodological decisions made during
 * **Evidence**: Manifest generated and verified by `scripts/inspect_data.py`.
 * **Alternative Considered**: Plain text notes in README.
 * **Why Rejected**: Non-machine-readable and unverified.
+
+---
+
+### Decision 13: Separate Query Representation for Intent vs. Context for Grounding
+* **Decision**: Use single-turn customer query text (C1) for intent classification, while reserving preceding dialogue context (C2) for historical case retrieval and grounded response generation.
+* **Why**: Controlled context ablation demonstrated that concatenating preceding turns degraded classifier Macro-F1 from 0.8800 down to 0.6975 (C2) and 0.6654 (C3) due to greeting/filler token dilution.
+* **Evidence**: Empirical ablation on 3,000 validation cases documented in `docs/context_experiment.md`.
+* **Alternative Considered**: Feeding full multi-turn linear dialogue into the intent classifier.
+* **Why Rejected**: Introduced severe noise and degraded discriminative intent classification.
+
+---
+
+### Decision 14: Multi-Stage Hybrid Retrieval with Reciprocal Rank Fusion (RRF)
+* **Decision**: Implement hybrid retrieval combining BM25 lexical search with sublinear TF-IDF dense embeddings via RRF ($k=60$), followed by cross-encoder re-ranking.
+* **Why**: Pure lexical search suffers on vocabulary mismatch (e.g. "battery drain" vs. "discharging fast"), while dense search alone misses exact model/error terms ("iOS 11.0.3"). Hybrid RRF achieves strong Recall@5 (0.360) and MRR (0.2694) without external API dependencies.
+* **Evidence**: Documented across experiments R1–R4 in `docs/retrieval_experiments.md`.
+* **Alternative Considered**: Dense-only semantic retrieval via third-party embedding APIs.
+* **Why Rejected**: API latency, quota volatility, and poor exact-match precision on technical version identifiers.
+
+---
+
+### Decision 15: Conservative Operating Point Selection ($\tau = 0.55$)
+* **Decision**: Set the operational intent confidence threshold at $\tau = 0.55$, accepting 27.9% auto-handle coverage in order to secure 99.12% escalation recall.
+* **Why**: In safety-critical support, false auto-handling on security, billing, or physical hardware issues presents acute operational risk. Operating at $\tau = 0.55$ ensures high recall on sensitive inquiries while safely automating common troubleshooting.
+* **Evidence**: Quantitative sweep across 6 threshold points ($N=1,500$) in `eval/results/escalation/threshold_sweep.csv`.
+* **Alternative Considered**: Lowering the threshold to $\tau = 0.40$ to increase nominal coverage to 30.2%.
+* **Why Rejected**: Increased false auto-handling risk on borderline ambiguous inquiries.

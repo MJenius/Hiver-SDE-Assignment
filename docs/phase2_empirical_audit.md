@@ -11,12 +11,12 @@ This document provides a rigorous, transparent breakdown of the Phase 2 empirica
 
 ### 1.1 The Operating Curve & Enterprise Risk Function
 In customer support AI, **False Auto-Handling (FAHR) is an order of magnitude more costly than unnecessary escalation**:
-* An **unnecessary escalation** costs \$3–\$7 in human labor and adds a brief delay.
-* A **false auto-handle** on account lockout, billing disputes, or battery fire risks causes customer churn, regulatory violation, security breaches, or direct financial loss.
+* An **unnecessary escalation** costs human agent triage time and adds a brief handling delay.
+* A **false auto-handle** on account lockout, billing disputes, or hardware risks can cause customer churn, privacy/security violations, or direct financial harm.
 
-We define the Enterprise Loss Function as:
+To formalize this operational tradeoff, we define an **illustrative enterprise loss utility model**:
 $$L(\tau) = C_{\text{human}} \cdot (1 - \text{Coverage}(\tau)) + C_{\text{error}} \cdot \text{FAHR}(\tau)$$
-Where $C_{\text{error}} \approx 20 \times C_{\text{human}}$. The optimal operating point must aggressively bound FAHR while preserving automation on standard technical inquiries.
+Where the relative penalty ratio $C_{\text{error}} / C_{\text{human}} \approx 20$ is an **assumed operating heuristic** reflecting high safety-critical sensitivity (not an empirical dollar measurement derived from the Twitter dataset itself). The chosen operating point balances this illustrative utility by bounding FAHR while preserving automation on standard technical inquiries.
 
 ### 1.2 The Empirical Sweep Table (VALIDATION Split, $N=1,500$)
 Generated via `python eval/run_threshold_sweep.py`:
@@ -30,18 +30,18 @@ Generated via `python eval/run_threshold_sweep.py`:
 | **0.70** | 24.40% | 99.61% | 0.8951 | 0.9429 | 1.09% | 3.48 / 5.0 |
 | **0.80** | 21.73% | 99.90% | 0.8671 | 0.9284 | 0.31% | 3.52 / 5.0 |
 
-### 1.3 Why Is Coverage "Only" 27.9%?
-A naive observer might view 27.9% coverage as low. An empirical breakdown of the raw data reveals this is the **mathematically sound ceiling** under safe customer support policies:
+### 1.3 Operational Drivers Behind the Selected 27.9% Coverage
+The 27.9% coverage is not a proven mathematical limit or theoretical ceiling. Rather, it represents the **empirical operating outcome of our conservative policy thresholds** given the composition of Twitter customer inquiries:
 
-1. **Massive `unknown` / Ambient Churn (53.7% of all inquiries)**:
-   In Twitter/X support datasets, over 53% of inbound messages are greetings ("hey", "can you help?"), emotional rants without error descriptions ("apple your phones suck now"), or conversational fragments ("yes", "sent dm"). Under our strict taxonomy, these classify as `unknown` with low confidence and are **deterministically escalated** for human triage.
-2. **Policy-Mandated Interception (15.5% of technical inquiries)**:
-   - `apple_id_account_security` (2.4%): Direct risk of social engineering / credential takeover. Mandatory human handling.
-   - `app_store_billing_subscriptions` (1.5%): Financial transactions and refund requests. Mandatory human handling.
-   - `hardware_screen_physical` (4.6%): Broken glass, water damage, swollen batteries. Physical inspection required.
-   - Retrieval Score $< 0.05$ (7.0%): Outlier inquiries where historical resolution similarity is poor.
+1. **High Diagnostic `unknown` / Ambient Proportion (~53.7% in 10k sample)**:
+   In our diagnostic audit of 10,000 inbound cases using the weak-intent rule set, 53.7% lacked explicit technical keywords (comprising greetings like "hey Apple", ambient rants without error descriptions, or fragmented turns like "dm sent"). While this sample heuristic is not a human-annotated population census, it demonstrates that a large fraction of real-world Twitter traffic lacks the specificity required for safe autonomous handling. Under our strict policy, low-confidence queries are safely escalated to humans.
+2. **Policy-Mandated Sensitive Interceptions**:
+   - `apple_id_account_security` (~2.4%): High credential / social engineering exposure. Mandatory human routing.
+   - `app_store_billing_subscriptions` (~1.5%): Financial transactions, charges, and refunds. Mandatory human routing.
+   - `hardware_screen_physical` (~4.6%): Broken glass, battery swelling, water ingress. Mandatory physical triage.
+   - Retrieval Score $< 0.05$ (~7.0%): Outlier inquiries lacking strong historical resolution precedent.
 3. **The Addressable Safe Automation Pool**:
-   Only standard software/configuration inquiries (`os_update_issues`, `battery_performance`, `connectivity_wifi_bluetooth`, `icloud_sync_storage`, `audio_music_media`) qualify for autonomous resolution. Within this addressable sub-population (~31% of total incoming volume), **our system auto-handles 27.9% out of 31.0% (a 90.0% addressable automation rate)** while sustaining a 99.12% escalation safety recall.
+   Automation is predominantly focused on standard software and configuration issues (`os_update_issues`, `battery_performance`, `connectivity_wifi_bluetooth`, `icloud_sync_storage`, `audio_music_media`). At $\tau = 0.55$, the agent safely auto-handles the majority of this candidate addressable pool while preserving a 99.12% escalation safety recall.
 
 ---
 

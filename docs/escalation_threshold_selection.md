@@ -17,6 +17,7 @@ An unnecessary escalation merely routes an inquiry to a human agent; a false aut
 | 0.8 | 21.7% | 0.8671 | 0.9990 | 0.9284 | 0.31% |
 
 ## 3. Chosen Operating Point: tau = 0.55
-* **Coverage**: ~60% of technical inquiries auto-handled safely.
-* **Escalation Recall**: Exceeds 98%, ensuring security, account, billing, and hardware damages are deterministically intercepted.
-* **FAHR**: Constrained to zero or near-zero levels.
+* **Selected Coverage**: 27.9% overall auto-handling rate across validation traffic.
+* **Escalation Recall**: 99.12%, ensuring sensitive account security, billing, hardware damage, and low-confidence inquiries are intercepted for human review.
+* **FAHR**: Constrained to 2.15% under validation heuristics.
+* **Tradeoff Context**: While higher coverage (30.2%) is possible at lower thresholds (tau=0.40), tau=0.55 provides stronger confidence calibration without excessive false escalations.
