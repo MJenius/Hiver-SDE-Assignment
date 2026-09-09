@@ -1,7 +1,10 @@
 {
   "metadata": {
     "experiment_id": "exp_final_phase3_001",
-    "git_commit": "78f2619",
+    "git_commit": "af87e13e625ba041fb8a1b80c644d768a0b213ba",
+    "config_sha256": "cfd051345606453bbe8bd07c809d0bbcbdd9fb6d99a43cd2d8e84b6b5229950d",
+    "benchmark_sha256": "46340dd3e9e456503499b264800b3b6d57d0740d155a97c1872d4978983d9499",
+    "split_guard_status": "PASSED",
     "sample_size": 200,
     "split": "test",
     "operating_threshold_tau": 0.55
@@ -135,6 +138,7 @@
     }
   },
   "retrieval": {
+    "metric_type": "intent_category_match",
     "recall_at_1": {
       "point_estimate": 0.1,
       "ci_lower": 0.06,
@@ -156,7 +160,7 @@
       "std_err": 0.0204,
       "n": 200
     },
-    "mrr": {
+    "intent_match_mrr": {
       "point_estimate": 0.1,
       "ci_lower": 0.06,
       "ci_upper": 0.14,
@@ -165,12 +169,13 @@
     }
   },
   "grounding": {
-    "claim_groundedness_rate": {
+    "evaluated_scope": "generated_claims_among_autohandled",
+    "claim_support_rate": {
       "point_estimate": 1.0,
       "ci_lower": 1.0,
       "ci_upper": 1.0,
       "std_err": 0.0,
-      "n": 200
+      "n": 87
     },
     "total_claims": 87,
     "unsupported_claims": 0

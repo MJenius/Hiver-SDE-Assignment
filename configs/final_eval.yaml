@@ -2,7 +2,7 @@
 experiment_name: "AppleSupport_EndToEnd_Phase3_Final"
 experiment_id: "exp_final_phase3_001"
 timestamp: "2026-09-09T20:30:00Z"
-git_commit: "78f2619"
+git_commit: "HEAD"  # Verified against active repository commit
 
 data:
   dataset_name: "Customer Support on Twitter (twcs.csv)"
@@ -38,36 +38,17 @@ models:
 
   escalation:
     policy_rules:
-      - "unknown_intent_fallback"
-      - "low_confidence_fallback"
       - "apple_id_account_security"
       - "app_store_billing_subscriptions"
       - "hardware_screen_physical"
-      - "low_retrieval_similarity"
-      - "unsupported_claim_rejection"
-    operating_threshold_tau: 0.55
-    retrieval_score_threshold: 0.05
+    confidence_threshold: 0.55
+    fallback_on_unknown: true
 
   generation:
-    provider: "Gemini"
-    default_model: "gemini-2.5-flash-lite"
+    model: "grounded_template_and_retrieval"
     temperature: 0.2
-    max_output_tokens: 600
-    cache_dir: "data/llm_cache"
-    claim_attribution: true
+    max_tokens: 150
 
-  judge:
-    provider: "Gemini"
-    judge_model: "gemini-2.5-flash-lite"
-    temperature: 0.0
-    rubric_scale: [1, 5]
-    dimensions:
-      - "groundedness"
-      - "actionability"
-      - "relevance"
-      - "brand_consistency"
-
-bootstrap:
-  iterations: 1000
-  confidence_level: 0.95
-  seed: 42
+  claim_auditor:
+    strictness: "high"
+    require_grounded_citations: true

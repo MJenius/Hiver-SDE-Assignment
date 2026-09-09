@@ -106,7 +106,7 @@ def inspect_dataset():
         "total_rows": total_rows,
         "columns": columns,
         "schema": schema,
-        "date_range_min": min_date.strftime("%Y-%m-%d %H:MM:%S") if pd.notna(min_date) else None,
+        "date_range_min": min_date.strftime("%Y-%m-%d %H:%M:%S") if pd.notna(min_date) else None,
         "date_range_max": max_date.strftime("%Y-%m-%d %H:%M:%S") if pd.notna(max_date) else None,
         "environment": {
             "python_version": platform.python_version(),

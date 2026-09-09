@@ -1,6 +1,6 @@
-# Phase 1 Decision Log
+# Engineering Decision Log
 
-This log records the 12 key engineering and methodological decisions made during Phase 1. Each entry documents the rationale, empirical evidence, alternatives considered, and explicit reasons for rejection.
+This log records the 20 key engineering, methodological, and scientific decisions made across Phases 1, 2, and 3. Each entry documents the rationale, empirical evidence, alternatives considered, and explicit reasons for rejection.
 
 ---
 
@@ -121,12 +121,12 @@ This log records the 12 key engineering and methodological decisions made during
 
 ---
 
-### Decision 14: Multi-Stage Hybrid Retrieval with Reciprocal Rank Fusion (RRF)
-* **Decision**: Implement hybrid retrieval combining BM25 lexical search with sublinear TF-IDF dense embeddings via RRF ($k=60$), followed by cross-encoder re-ranking.
+### Decision 14: Multi-Stage Hybrid Retrieval with Reciprocal Rank Fusion (RRF) and Lexical/Jaccard Reranking
+* **Decision**: Implement hybrid retrieval combining BM25 lexical search with sublinear TF-IDF dense embeddings via RRF ($k=60$), followed by token Jaccard and exact n-gram overlap reranking.
 * **Why**: Pure lexical search suffers on vocabulary mismatch (e.g. "battery drain" vs. "discharging fast"), while dense search alone misses exact model/error terms ("iOS 11.0.3"). Hybrid RRF achieves strong Recall@5 (0.360) and MRR (0.2694) without external API dependencies.
 * **Evidence**: Documented across experiments R1–R4 in `docs/retrieval_experiments.md`.
-* **Alternative Considered**: Dense-only semantic retrieval via third-party embedding APIs.
-* **Why Rejected**: API latency, quota volatility, and poor exact-match precision on technical version identifiers.
+* **Alternative Considered**: Heavy transformer cross-encoder or dense-only third-party embedding APIs.
+* **Why Rejected**: API latency, quota volatility, and memory footprint incompatible with single-command local reproducibility.
 
 ---
 
@@ -145,7 +145,6 @@ This log records the 12 key engineering and methodological decisions made during
 * **Evidence**: Evaluated on these adjudicated targets, escalation recall reached 93.55% [95% CI: 0.8812–0.9872] and autonomous coverage reached 43.50% [95% CI: 37.00%–50.50%].
 * **Alternative Considered**: Claiming manual human ground-truth annotation.
 * **Why Rejected**: Epistemically inaccurate; the benchmark targets were programmatically derived from candidate intent and domain heuristics.
-
 
 ---
 
@@ -167,12 +166,13 @@ This log records the 12 key engineering and methodological decisions made during
 
 ---
 
-### Decision 19: Dual-Annotator Protocol & Agreement Study Simulation
-* **Decision**: Formalize a dual-annotator agreement protocol and compute baseline Cohen's Kappa over a stratified 50-case sample to establish target consistency thresholds for operational intent and escalation.
-* **Why**: Establishes a rigorous methodology and inter-rater agreement rubric (Intent $\kappa = 0.8742$, Escalation $\kappa = 0.6739$) before scaling human-in-the-loop review in production.
-* **Evidence**: Documented in `docs/annotation_quality.md` and `eval/golden/annotations/dual_annotation_50.jsonl`.
-* **Alternative Considered**: Presenting simulated annotation logs as independent biological human consensus.
-* **Why Rejected**: Dishonest provenance claim.
+### Decision 19: Dual-Annotator Protocol & Target Consistency Design Thresholds
+* **Decision**: Formalize a dual-annotator agreement protocol and establish design consistency thresholds (Target Intent $\kappa \ge 0.80$, Target Escalation $\kappa \ge 0.75$) over a reference 50-case sample (`eval/golden/annotations/dual_annotation_50.jsonl`).
+* **Why**: Prepares a rigorous rubric and clear boundary rules for scaling human-in-the-loop annotation in production.
+* **Evidence**: Documented in `docs/annotation_quality.md`.
+* **Alternative Considered**: Claiming measured biological human agreement.
+* **Why Rejected**: Epistemically dishonest; thresholds are design specifications and simulation walk-throughs.
+
 
 
 ---

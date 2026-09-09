@@ -1,4 +1,4 @@
-﻿# Data Model Specification
+# Data Model Specification
 
 ## 1. Hierarchy & Core Entities
 
@@ -62,12 +62,12 @@ The unit evaluated by the golden evaluation protocol and LLM judges:
 * `conversation_id` (str): Parent conversation identifier (ensuring whole-conversation leakage gating).
 * `customer_message` (str): Customer text requiring action.
 * `preceding_context` (str): Path-isolated preceding dialogue context.
-* `intent` (str): Ground-truth human-annotated intent from the taxonomy.
-* `should_escalate` (bool): Ground-truth decision on whether an automated agent should escalate to human.
+* `intent` (str): Policy-adjudicated benchmark intent target from the taxonomy.
+* `should_escalate` (bool): Policy-adjudicated escalation target on whether an automated agent should escalate.
 * `escalation_reason` (str / null): Justification for escalation (e.g., `requires_authenticated_access`, `hardware_damage_repair`, `sentiment_crisis`).
-* `evidence_sufficient` (enum: `yes` | `no` | `uncertain`): Whether historical precedents provide adequate evidence to resolve the query safely.
+* `evidence_sufficient` (enum: `yes` | `no` | `uncertain`): Policy-adjudicated evidence sufficiency target.
 * `ambiguity_type` (enum: `none` | `vague` | `multi_intent` | `short` | `context_dependent` | `typo_heavy`).
-* `notes` (str): Annotator commentary.
+* `notes` (str): Benchmark adjudication commentary.
 
 ---
 

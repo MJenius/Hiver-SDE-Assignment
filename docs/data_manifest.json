@@ -22,7 +22,7 @@
     "response_tweet_id": "float64",
     "in_response_to_tweet_id": "int64"
   },
-  "date_range_min": "2008-05-08 20:MM:59",
+  "date_range_min": "2008-05-08 20:41:59",
   "date_range_max": "2017-12-03 23:14:01",
   "environment": {
     "python_version": "3.14.7",

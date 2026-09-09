@@ -2,12 +2,12 @@
 Single-command unified evaluation runner for Phase 3 submission.
 
 Runs:
-1. Split & leakage guard assertions
-2. Quarantined final test evaluation (N=200)
-3. 95% Bootstrap confidence intervals calculation
-4. Summary metrics output with failure analysis pointer
+1. Split & leakage guard assertions across whole-conversation splits
+2. Quarantined final policy benchmark evaluation (N=200)
+3. 95% Bootstrap confidence intervals calculation (B=1,000)
+4. Summary metrics output with failure analysis and provenance disclosures
 
-Execution time: < 1 minute (100% locally deterministic, zero API cost).
+Execution: Deterministic local benchmark given frozen artifacts and cached outputs (< 2 minutes).
 """
 
 import sys
@@ -39,10 +39,8 @@ def main():
         sys.exit(1)
 
     # 2. Quarantined Final Test Benchmark Execution
-    print("\n[Step 2/3] Executing Final Test Evaluation & Bootstrap CIs (N=200, B=1000)...")
+    print("\n[Step 2/3] Executing Final Benchmark Evaluation & Bootstrap CIs (N=200, B=1000)...")
     metrics, ci_results = run_final_evaluation()
-
-
 
     # 3. Print Official Summary Report
     elapsed = time.time() - start_time
@@ -55,7 +53,7 @@ def main():
     ret = metrics["retrieval"]
     gr = metrics["grounding"]
 
-    print("\n1. INTENT CLASSIFICATION (10 Classes):")
+    print("\n1. INTENT CLASSIFICATION (Policy-Adjudicated Targets, 10 Classes):")
     print(f"  - Accuracy:         {ci_results['intent_accuracy']['point_estimate']:.4f}  [95% CI: {ci_results['intent_accuracy']['ci_lower']:.4f} - {ci_results['intent_accuracy']['ci_upper']:.4f}]")
     print(f"  - Macro-F1:         {ci_results['intent_macro_f1']['point_estimate']:.4f}  [95% CI: {ci_results['intent_macro_f1']['ci_lower']:.4f} - {ci_results['intent_macro_f1']['ci_upper']:.4f}]")
 
@@ -66,15 +64,13 @@ def main():
     print(f"  - Autonomous Coverage:  {ci_results['autonomous_coverage']['point_estimate']*100:.2f}%  [95% CI: {ci_results['autonomous_coverage']['ci_lower']*100:.2f}% - {ci_results['autonomous_coverage']['ci_upper']*100:.2f}%]")
     print(f"  - False Auto-Handle:    {ci_results['false_auto_handle_rate']['point_estimate']*100:.2f}%   [95% CI: {ci_results['false_auto_handle_rate']['ci_lower']*100:.2f}% - {ci_results['false_auto_handle_rate']['ci_upper']*100:.2f}%]")
 
-    print("\n3. RETRIEVAL & GROUNDEDNESS:")
-    print(f"  - Top-5 MRR:            {ci_results['retrieval_mrr']['point_estimate']:.4f}  [95% CI: {ci_results['retrieval_mrr']['ci_lower']:.4f} - {ci_results['retrieval_mrr']['ci_upper']:.4f}]")
-    print(f"  - Claim Groundedness:   {ci_results['claim_groundedness']['point_estimate']*100:.2f}% [95% CI: {ci_results['claim_groundedness']['ci_lower']*100:.2f}% - {ci_results['claim_groundedness']['ci_upper']*100:.2f}%]")
-
-
+    print("\n3. RETRIEVAL & GROUNDING:")
+    print(f"  - Intent-Match MRR:     {ci_results['intent_match_mrr']['point_estimate']:.4f}  [95% CI: {ci_results['intent_match_mrr']['ci_lower']:.4f} - {ci_results['intent_match_mrr']['ci_upper']:.4f}]")
+    print(f"  - Claim Support Rate:   {ci_results['claim_support_rate']['point_estimate']*100:.2f}% [95% CI: {ci_results['claim_support_rate']['ci_lower']*100:.2f}% - {ci_results['claim_support_rate']['ci_upper']*100:.2f}%]")
 
     print("\n" + "-" * 70)
     print(f"Execution completed in {elapsed:.2f} seconds.")
-    print("Audit Artifacts:")
+    print("Audit & Traceability Artifacts:")
     print("  - Detailed Metrics:     eval/results/final/final_test_metrics.json")
     print("  - Bootstrap CIs:        eval/results/final/confidence_intervals.json")
     print("  - Predictions:          eval/results/final/final_test_predictions.csv")

@@ -1,4 +1,4 @@
-﻿"""
+"""
 src/agent.py
 The Complete Phase 2 AppleSupport Customer Support Agent Pipeline.
 Coordinates:
@@ -56,14 +56,21 @@ class AppleSupportAgent:
         """
         End-to-end processing of a customer inquiry.
         """
-        # Step 1: Intent Classification (using raw query for maximum discriminative power)
+        # Step 1: Intent Classification (using raw query C1 for maximum discriminative power)
         intent_res = self.classifier.predict(message)
         predicted_intent = intent_res["intent"]
         intent_conf = intent_res["confidence"]
 
-        # Step 2: Retrieval (using query + bounded context)
-        raw_candidates = self.retriever.retrieve(message, context=context, k=10)
-        retrieved_cases = self.reranker.rerank(message, context, raw_candidates, top_k=3)
+        # Bound context strictly to immediate last 2 preceding turns (C2) to prevent topic dilution
+        bounded_context = context
+        if context and " | " in context:
+            turns = [t.strip() for t in context.split(" | ") if t.strip()]
+            if len(turns) > 2:
+                bounded_context = " | ".join(turns[-2:])
+
+        # Step 2: Retrieval (using query + bounded context C2)
+        raw_candidates = self.retriever.retrieve(message, context=bounded_context, k=10)
+        retrieved_cases = self.reranker.rerank(message, bounded_context, raw_candidates, top_k=3)
 
         retrieval_payload = [
             {

@@ -34,18 +34,18 @@
     "std_err": 0.0282,
     "n": 87
   },
-  "retrieval_mrr": {
+  "intent_match_mrr": {
     "point_estimate": 0.1,
     "ci_lower": 0.06,
     "ci_upper": 0.14,
     "std_err": 0.0204,
     "n": 200
   },
-  "claim_groundedness": {
+  "claim_support_rate": {
     "point_estimate": 1.0,
     "ci_lower": 1.0,
     "ci_upper": 1.0,
     "std_err": 0.0,
-    "n": 200
+    "n": 87
   }
 }
