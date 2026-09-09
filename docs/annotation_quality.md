@@ -66,4 +66,4 @@ To illustrate how the protocol resolves ambiguous cases:
    * *Option B*: Not escalated (`os_update_issues`), suggesting DFU restore.
    * *Adjudication Rule*: Adjudicate as `should_escalate=True` because physical unresponsiveness risks underlying hardware failure and customer churn if self-service software restore fails.
 
-All 50 reference calibration examples are recorded in `eval/golden/annotations/dual_annotation_50.jsonl` as reference calibration data.
+All 50 reference calibration examples are recorded in `eval/golden/annotations/simulated_annotation_examples_50.jsonl` as reference calibration data.

@@ -167,7 +167,7 @@ This log records the 20 key engineering, methodological, and scientific decision
 ---
 
 ### Decision 19: Dual-Annotator Protocol & Target Consistency Design Thresholds
-* **Decision**: Formalize a dual-annotator agreement protocol and establish design consistency thresholds (Target Intent $\kappa \ge 0.80$, Target Escalation $\kappa \ge 0.75$) over a reference 50-case sample (`eval/golden/annotations/dual_annotation_50.jsonl`).
+* **Decision**: Formalize a dual-annotator agreement protocol and establish design consistency thresholds (Target Intent $\kappa \ge 0.80$, Target Escalation $\kappa \ge 0.75$) over a reference 50-case sample (`eval/golden/annotations/simulated_annotation_examples_50.jsonl`).
 * **Why**: Prepares a rigorous rubric and clear boundary rules for scaling human-in-the-loop annotation in production.
 * **Evidence**: Documented in `docs/annotation_quality.md`.
 * **Alternative Considered**: Claiming measured biological human agreement.

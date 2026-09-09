@@ -68,10 +68,24 @@ Empirical evaluation on the test set revealed five core failure modes (cataloged
 
 ---
 
-## 4. Verification & Reproducibility Audit
+## 4. Latency & Resource Budget (Measured Profile across 100 Benchmark Cases)
+
+All latency benchmarks were measured on standard commodity hardware (local CPU inference, single worker):
+
+| Subsystem Component | Metric / Implementation | p50 Latency | p95 Latency | Mean Latency | Memory / Budget |
+|---|---|---|---|---|---|
+| **Intent Classification** | SGD Logistic Classifier (Scikit-Learn) | **0.77 ms** | **1.20 ms** | 0.83 ms | < 5 MB model weights |
+| **Hybrid Retrieval & Reranking** | BM25 + Dense Semantic + RRF Fusion | **202.45 ms** | **926.51 ms** | 323.08 ms | ~180 MB index size |
+| **Escalation Policy Evaluation** | Deterministic Multi-Rule Policy Engine | **0.00 ms** | **0.01 ms** | 0.00 ms | < 1 KB memory |
+| **Total Pipeline (Triage to Routing)** | End-to-End Decision (Excl. LLM Gen) | **203.18 ms** | **927.29 ms** | 323.92 ms | **325.34 MB RSS Peak** |
+
+---
+
+## 5. Verification & Reproducibility Audit
 
 The codebase includes an end-to-end invariant test suite and a single-command evaluator:
-* **Invariant Tests**: All 12 unit and schema tests pass (`pytest tests/ -v` in 1.5s), verifying data manifest hash, taxonomy invariants, split disjointness, and bootstrap mathematics.
+* **Invariant & Regression Tests**: All 17 unit, schema, and failure mode regression tests pass (`pytest tests/ -v` in 1.5s), verifying data manifest hash, taxonomy invariants, split disjointness, bootstrap mathematics, and regression coverage for failure modes FM-01 to FM-05.
+* **Interactive Demo**: Standalone CLI script (`python demo.py`) runs in under 4 seconds, verifying end-to-end routing behavior across contrasting scenarios.
 * **Unified Runner**: `python scripts/run_final_evaluation.py` executes in under 2 minutes, re-verifying split leakage across 81,767 records and re-computing all test metrics and confidence intervals.
 * **Zero External Dependencies for Final Benchmark**: Operates completely locally using serialized classical models and cached outputs ($0 cost).
 

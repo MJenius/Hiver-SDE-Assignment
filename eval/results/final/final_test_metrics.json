@@ -1,7 +1,7 @@
 {
   "metadata": {
     "experiment_id": "exp_final_phase3_001",
-    "git_commit": "af87e13e625ba041fb8a1b80c644d768a0b213ba",
+    "git_commit": "eddcb455675a2f9e037d5212fca1c217f474f5b4",
     "config_sha256": "cfd051345606453bbe8bd07c809d0bbcbdd9fb6d99a43cd2d8e84b6b5229950d",
     "benchmark_sha256": "46340dd3e9e456503499b264800b3b6d57d0740d155a97c1872d4978983d9499",
     "split_guard_status": "PASSED",
