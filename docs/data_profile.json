@@ -1,0 +1,142 @@
+{
+  "total_records": 2811774,
+  "inbound_records": 1537843,
+  "outbound_records": 1273931,
+  "inbound_percentage": 54.69,
+  "outbound_percentage": 45.31,
+  "missing_values": {
+    "tweet_id": 0,
+    "author_id": 0,
+    "inbound": 0,
+    "created_at": 0,
+    "text": 0,
+    "response_tweet_id": 1040629,
+    "in_response_to_tweet_id": 794335
+  },
+  "missing_percentages": {
+    "tweet_id": 0.0,
+    "author_id": 0.0,
+    "inbound": 0.0,
+    "created_at": 0.0,
+    "text": 0.0,
+    "response_tweet_id": 37.01,
+    "in_response_to_tweet_id": 28.25
+  },
+  "link_fields": {
+    "records_with_in_response_to": 2017439,
+    "percentage_with_in_response_to": 71.75,
+    "records_with_response_tweet_id": 1771145,
+    "percentage_with_response_tweet_id": 62.99
+  },
+  "text_length_distribution": {
+    "mean": 113.93566352986365,
+    "median": 115.0,
+    "p25": 78.0,
+    "p75": 139.0,
+    "p95": 216.0,
+    "min": 1,
+    "max": 452
+  },
+  "top_25_brands_by_outbound": [
+    {
+      "brand": "AmazonHelp",
+      "outbound_tweets": 169840
+    },
+    {
+      "brand": "AppleSupport",
+      "outbound_tweets": 106860
+    },
+    {
+      "brand": "Uber_Support",
+      "outbound_tweets": 56270
+    },
+    {
+      "brand": "SpotifyCares",
+      "outbound_tweets": 43265
+    },
+    {
+      "brand": "Delta",
+      "outbound_tweets": 42253
+    },
+    {
+      "brand": "Tesco",
+      "outbound_tweets": 38573
+    },
+    {
+      "brand": "AmericanAir",
+      "outbound_tweets": 36764
+    },
+    {
+      "brand": "TMobileHelp",
+      "outbound_tweets": 34317
+    },
+    {
+      "brand": "comcastcares",
+      "outbound_tweets": 33031
+    },
+    {
+      "brand": "British_Airways",
+      "outbound_tweets": 29361
+    },
+    {
+      "brand": "SouthwestAir",
+      "outbound_tweets": 28977
+    },
+    {
+      "brand": "VirginTrains",
+      "outbound_tweets": 27817
+    },
+    {
+      "brand": "Ask_Spectrum",
+      "outbound_tweets": 25860
+    },
+    {
+      "brand": "XboxSupport",
+      "outbound_tweets": 24557
+    },
+    {
+      "brand": "sprintcare",
+      "outbound_tweets": 22381
+    },
+    {
+      "brand": "hulu_support",
+      "outbound_tweets": 21872
+    },
+    {
+      "brand": "sainsburys",
+      "outbound_tweets": 19466
+    },
+    {
+      "brand": "GWRHelp",
+      "outbound_tweets": 19364
+    },
+    {
+      "brand": "AskPlayStation",
+      "outbound_tweets": 19098
+    },
+    {
+      "brand": "ChipotleTweets",
+      "outbound_tweets": 18749
+    },
+    {
+      "brand": "VerizonSupport",
+      "outbound_tweets": 17966
+    },
+    {
+      "brand": "UPSHelp",
+      "outbound_tweets": 17817
+    },
+    {
+      "brand": "ATVIAssist",
+      "outbound_tweets": 17650
+    },
+    {
+      "brand": "O2",
+      "outbound_tweets": 16212
+    },
+    {
+      "brand": "Safaricom_Care",
+      "outbound_tweets": 16077
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+﻿{
+  "phase": 1,
+  "status": "COMPLETED",
+  "dataset": {
+    "file_path": "data/twcs/twcs.csv",
+    "sha256": "cd297fcfa1bf6f99938be242e8e578980bc6d1b96adc8691abec9a39175b03c0",
+    "file_size_mb": 492.58,
+    "total_rows": 2811774,
+    "inbound_tweets": 1537843,
+    "outbound_tweets": 1273931
+  },
+  "selected_brand": {
+    "brand_handle": "AppleSupport",
+    "rationale": "Empirical rubric champion (score: 4.61/5.0). High unique customer reach (58,567), substantive public troubleshooting dialogues, low customer duplication (0.58%), clean monolingual English (87.5%), and clear operational escalation boundaries.",
+    "raw_candidate_tweets": 204756,
+    "reconstructed_two_sided_conversations": 53010,
+    "total_actionable_cases": 84608,
+    "branching_nodes": 5118,
+    "orphan_turns": 30201
+  },
+  "leakage_controls": {
+    "splitting_unit": "Whole Conversation DAG (conversation_id)",
+    "deterministic_hash": "SHA-256(seed_conversation_id)",
+    "cross_split_conversation_overlap": 0.0,
+    "quarantined_golden_set": true
+  },
+  "intent_taxonomy": {
+    "num_intents": 10,
+    "intents": [
+      "os_update_issues",
+      "battery_performance",
+      "apple_id_account_security",
+      "app_store_billing_subscriptions",
+      "hardware_screen_physical",
+      "connectivity_wifi_bluetooth",
+      "icloud_sync_storage",
+      "audio_music_media",
+      "store_orders_shipping",
+      "unknown"
+    ],
+    "config_file": "configs/intents.yaml"
+  },
+  "evaluation_design": {
+    "golden_candidate_count": 200,
+    "hard_candidate_count": 100,
+    "files": {
+      "golden_candidates": "eval/golden/candidates/golden_candidates.jsonl",
+      "annotation_template": "eval/golden/annotations_template.csv",
+      "hard_candidates": "eval/hard/candidates/hard_candidates.jsonl"
+    },
+    "metrics": {
+      "intent": ["accuracy", "macro_f1", "per_class_f1"],
+      "retrieval": ["recall_at_1", "recall_at_3", "recall_at_5", "mrr"],
+      "escalation": ["precision", "recall", "coverage", "false_auto_handle_rate"],
+      "reply_quality": ["groundedness_score", "unsupported_claim_rate", "actionability", "brand_consistency"],
+      "meta_evaluation": ["human_vs_llm_judge_kappa", "position_bias_swap"]
+    }
+  },
+  "baselines": [
+    "Baseline 0: Majority-Class Classifier & Canned Escalation",
+    "Baseline 1: TF-IDF + Regularized Logistic Regression",
+    "Baseline 2: Dense Semantic Nearest-Neighbor (Bi-Encoder Embeddings)"
+  ],
+  "testing": {
+    "test_framework": "pytest",
+    "tests_collected": 10,
+    "tests_passed": 10
+  }
+}

@@ -1,0 +1,533 @@
+[
+  {
+    "conversation_id": "700",
+    "brand": "AppleSupport",
+    "customer_id": "115854",
+    "turns": [
+      {
+        "tweet_id": "700",
+        "author_id": "115854",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:16:56 +0000 2017",
+        "text": "@AppleSupport why are my I\ufe0f\u2019s changing not showing up correctly on any of my social media platforms? https://t.co/GyRvpyVnkE",
+        "in_response_to_tweet_id": null,
+        "response_tweet_id": "698"
+      },
+      {
+        "tweet_id": "698",
+        "author_id": "115854",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:17:40 +0000 2017",
+        "text": "@AppleSupport  https://t.co/NV0yucs0lB",
+        "in_response_to_tweet_id": "700",
+        "response_tweet_id": "696"
+      },
+      {
+        "tweet_id": "696",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:27:49 +0000 2017",
+        "text": "@115854 We're here for you. Which version of the iOS are you running? Check from Settings &gt; General &gt; About.",
+        "in_response_to_tweet_id": "698",
+        "response_tweet_id": "697"
+      },
+      {
+        "tweet_id": "697",
+        "author_id": "115854",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:31:23 +0000 2017",
+        "text": "@AppleSupport The newest update. I\ufe0f made sure to download it yesterday.",
+        "in_response_to_tweet_id": "696",
+        "response_tweet_id": "699"
+      },
+      {
+        "tweet_id": "699",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:36:27 +0000 2017",
+        "text": "@115854 Lets take a closer look into this issue. Select the following link to join us in a DM and we'll go from there. https://t.co/GDrqU22YpT",
+        "in_response_to_tweet_id": "697",
+        "response_tweet_id": null
+      }
+    ],
+    "is_branched": false,
+    "turn_count": 5
+  },
+  {
+    "conversation_id": "709",
+    "brand": "AppleSupport",
+    "customer_id": "115855",
+    "turns": [
+      {
+        "tweet_id": "709",
+        "author_id": "115855",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 21:34:45 +0000 2017",
+        "text": "@AppleSupport I\ufe0f need answers because it\u2019s annoying \ud83d\ude43",
+        "in_response_to_tweet_id": "710",
+        "response_tweet_id": "708"
+      },
+      {
+        "tweet_id": "708",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 21:43:15 +0000 2017",
+        "text": "@115855 We'd like to look into this with you. Which model do you have and is iOS 11.1 installed? Any steps tried so far?",
+        "in_response_to_tweet_id": "709",
+        "response_tweet_id": "707"
+      },
+      {
+        "tweet_id": "707",
+        "author_id": "115855",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 21:48:51 +0000 2017",
+        "text": "@AppleSupport I\ufe0f have an iPhone 7 Plus and yes I\ufe0f do",
+        "in_response_to_tweet_id": "708",
+        "response_tweet_id": "705"
+      },
+      {
+        "tweet_id": "705",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 21:57:00 +0000 2017",
+        "text": "@115855 That's great it has iOS 11.1 as we can rule out being outdated. Any steps tried since this started? Do you recall when it started?",
+        "in_response_to_tweet_id": "707",
+        "response_tweet_id": "706,704"
+      },
+      {
+        "tweet_id": "706",
+        "author_id": "115855",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 21:58:48 +0000 2017",
+        "text": "@AppleSupport Last night",
+        "in_response_to_tweet_id": "705",
+        "response_tweet_id": null
+      },
+      {
+        "tweet_id": "704",
+        "author_id": "115855",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 21:59:17 +0000 2017",
+        "text": "@AppleSupport This is what it looks like https://t.co/XCQU2l4xUB",
+        "in_response_to_tweet_id": "705",
+        "response_tweet_id": "703"
+      },
+      {
+        "tweet_id": "703",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:09:52 +0000 2017",
+        "text": "@115855 Any steps tried since it started last night?",
+        "in_response_to_tweet_id": "704",
+        "response_tweet_id": "702"
+      },
+      {
+        "tweet_id": "702",
+        "author_id": "115855",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:11:31 +0000 2017",
+        "text": "@AppleSupport Tried resetting my settings .. restarting my phone .. all that",
+        "in_response_to_tweet_id": "703",
+        "response_tweet_id": "701"
+      },
+      {
+        "tweet_id": "701",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:26:49 +0000 2017",
+        "text": "@115855 Let's go to DM for the next steps. DM us here: https://t.co/GDrqU22YpT",
+        "in_response_to_tweet_id": "702",
+        "response_tweet_id": null
+      }
+    ],
+    "is_branched": true,
+    "turn_count": 9
+  },
+  {
+    "conversation_id": "714",
+    "brand": "AppleSupport",
+    "customer_id": "115856",
+    "turns": [
+      {
+        "tweet_id": "714",
+        "author_id": "115856",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:19:32 +0000 2017",
+        "text": "Hey @AppleSupport and anyone else who upgraded to ios11.1, are y\u2019all having issues with capital \u201cI\ufe0f\u201d in the Mail app? As it puts in \u201cA\u201d?",
+        "in_response_to_tweet_id": null,
+        "response_tweet_id": "712,715"
+      },
+      {
+        "tweet_id": "712",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:26:29 +0000 2017",
+        "text": "@115856 Hey, let's work together to figure out what's going on. Meet us in DM and we'll continue from there. https://t.co/GDrqU22YpT",
+        "in_response_to_tweet_id": "714",
+        "response_tweet_id": "713"
+      },
+      {
+        "tweet_id": "713",
+        "author_id": "115856",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:35:17 +0000 2017",
+        "text": "@AppleSupport Just sent you all my DM",
+        "in_response_to_tweet_id": "712",
+        "response_tweet_id": null
+      }
+    ],
+    "is_branched": false,
+    "turn_count": 3
+  },
+  {
+    "conversation_id": "723",
+    "brand": "AppleSupport",
+    "customer_id": "115859",
+    "turns": [
+      {
+        "tweet_id": "723",
+        "author_id": "115859",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:11:16 +0000 2017",
+        "text": "@115858 @AppleSupport hello are all the lines closed for tonight #help",
+        "in_response_to_tweet_id": null,
+        "response_tweet_id": "722"
+      },
+      {
+        "tweet_id": "722",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:17:30 +0000 2017",
+        "text": "@115859 What's going on? We're hapy to help if we can. https://t.co/GDrqU22YpT",
+        "in_response_to_tweet_id": "723",
+        "response_tweet_id": "721"
+      },
+      {
+        "tweet_id": "721",
+        "author_id": "115859",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:18:14 +0000 2017",
+        "text": "@AppleSupport are the call centres closed for the night?",
+        "in_response_to_tweet_id": "722",
+        "response_tweet_id": "720"
+      },
+      {
+        "tweet_id": "720",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:24:27 +0000 2017",
+        "text": "@115859 We've received your DM and will continue there.",
+        "in_response_to_tweet_id": "721",
+        "response_tweet_id": null
+      }
+    ],
+    "is_branched": false,
+    "turn_count": 4
+  },
+  {
+    "conversation_id": "730",
+    "brand": "AppleSupport",
+    "customer_id": "115861",
+    "turns": [
+      {
+        "tweet_id": "730",
+        "author_id": "115861",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 20:46:35 +0000 2017",
+        "text": "Hello, internet. Can someone explain why this symbol keeps appearing on my phone and when I\ufe0f try to type the letter I\ufe0f? Also @AppleSupport https://t.co/QKwvTLtiN7",
+        "in_response_to_tweet_id": null,
+        "response_tweet_id": "729,731"
+      },
+      {
+        "tweet_id": "729",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 20:55:34 +0000 2017",
+        "text": "@115861 You're in the right place; we'll do all we can to help. To start, let us know what iOS version is installed via DM: https://t.co/GDrqU22YpT",
+        "in_response_to_tweet_id": "730",
+        "response_tweet_id": "728"
+      },
+      {
+        "tweet_id": "728",
+        "author_id": "115862",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 20:57:26 +0000 2017",
+        "text": "@AppleSupport @115861 We\u2019re going to need you to share the answers Angela. I\ufe0f can\u2019t stand this!",
+        "in_response_to_tweet_id": "729",
+        "response_tweet_id": "727"
+      },
+      {
+        "tweet_id": "727",
+        "author_id": "115861",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 21:02:34 +0000 2017",
+        "text": "@115862 @AppleSupport I will!",
+        "in_response_to_tweet_id": "728",
+        "response_tweet_id": "725"
+      },
+      {
+        "tweet_id": "725",
+        "author_id": "115860",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:16:35 +0000 2017",
+        "text": "@115861 @115862 @AppleSupport I\ufe0f upgraded. I\ufe0ft didn\u2019t work.",
+        "in_response_to_tweet_id": "727",
+        "response_tweet_id": "724,726"
+      },
+      {
+        "tweet_id": "726",
+        "author_id": "115861",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:18:14 +0000 2017",
+        "text": "@115860 @115862 @AppleSupport Didn\u2019t work for me either\ud83d\ude14",
+        "in_response_to_tweet_id": "725",
+        "response_tweet_id": null
+      },
+      {
+        "tweet_id": "724",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:22:31 +0000 2017",
+        "text": "@115860 Reach out to us via DM, and we can take a look at this with you. https://t.co/GDrqU22YpT",
+        "in_response_to_tweet_id": "725",
+        "response_tweet_id": null
+      }
+    ],
+    "is_branched": true,
+    "turn_count": 7
+  },
+  {
+    "conversation_id": "733",
+    "brand": "AppleSupport",
+    "customer_id": "115863",
+    "turns": [
+      {
+        "tweet_id": "733",
+        "author_id": "115863",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:16:40 +0000 2017",
+        "text": "@AppleSupport I\u2019ve got a screenshot saying my #iPhoneX is reserved for the 3rd then an email saying it\u2019s the 18th... what happened?",
+        "in_response_to_tweet_id": null,
+        "response_tweet_id": "732"
+      },
+      {
+        "tweet_id": "732",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:22:31 +0000 2017",
+        "text": "@115863 Go ahead and send us a DM please. Let us know the country you're in.",
+        "in_response_to_tweet_id": "733",
+        "response_tweet_id": null
+      }
+    ],
+    "is_branched": false,
+    "turn_count": 2
+  },
+  {
+    "conversation_id": "736",
+    "brand": "AppleSupport",
+    "customer_id": "115864",
+    "turns": [
+      {
+        "tweet_id": "736",
+        "author_id": "115864",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:17:57 +0000 2017",
+        "text": "Thank you @AppleSupport I updated my phone and now it is even slower and barely works. Thank you for ruining my phone.\ud83d\ude24",
+        "in_response_to_tweet_id": null,
+        "response_tweet_id": "734"
+      },
+      {
+        "tweet_id": "734",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:22:00 +0000 2017",
+        "text": "@115864 We'd like to help, but we'll need more details. What's happening on your device and which model is it? Do you have iOS 11.1?",
+        "in_response_to_tweet_id": "736",
+        "response_tweet_id": "735"
+      },
+      {
+        "tweet_id": "735",
+        "author_id": "115864",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:23:35 +0000 2017",
+        "text": "@AppleSupport I have the iPhone 6s Plus and just did the most recent update.",
+        "in_response_to_tweet_id": "734",
+        "response_tweet_id": "737"
+      },
+      {
+        "tweet_id": "737",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:33:34 +0000 2017",
+        "text": "@115864 To make sure, is iOS 11.1 installed on it currently? Also, any steps tried so far? DM us here: https://t.co/GDrqU22YpT",
+        "in_response_to_tweet_id": "735",
+        "response_tweet_id": null
+      }
+    ],
+    "is_branched": false,
+    "turn_count": 4
+  },
+  {
+    "conversation_id": "747",
+    "brand": "AppleSupport",
+    "customer_id": "115865",
+    "turns": [
+      {
+        "tweet_id": "747",
+        "author_id": "115865",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 18:08:04 +0000 2017",
+        "text": "Hola @AppleSupport necesito urgente la actualizaci\u00f3n de software. La bater\u00eda me dura literal medio d\u00eda \ud83d\ude4d\ud83c\udffc\ud83d\ude47\ud83c\udffc\u200d\u2640\ufe0f",
+        "in_response_to_tweet_id": null,
+        "response_tweet_id": "746"
+      },
+      {
+        "tweet_id": "746",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 18:17:00 +0000 2017",
+        "text": "@115865 We offer support via Twitter in English. Get help in Spanish here: https://t.co/IBIY3vMgPj or join https://t.co/OczyRx7IOs",
+        "in_response_to_tweet_id": "747",
+        "response_tweet_id": "745"
+      },
+      {
+        "tweet_id": "745",
+        "author_id": "115865",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:00:34 +0000 2017",
+        "text": "@AppleSupport I need the software update urgently. The battery lasts literally half a day \ud83d\ude4d\ud83c\udffc\ud83d\ude41@AppleSupport",
+        "in_response_to_tweet_id": "746",
+        "response_tweet_id": "744"
+      },
+      {
+        "tweet_id": "744",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:06:27 +0000 2017",
+        "text": "@115865 Hi there! What type of device are we working with?",
+        "in_response_to_tweet_id": "745",
+        "response_tweet_id": "740"
+      },
+      {
+        "tweet_id": "740",
+        "author_id": "115865",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:14:45 +0000 2017",
+        "text": "@AppleSupport iPhone 7 Plus \ud83d\ude0a",
+        "in_response_to_tweet_id": "744",
+        "response_tweet_id": "738"
+      },
+      {
+        "tweet_id": "738",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:21:30 +0000 2017",
+        "text": "@115865 Thanks! Which iOS version is currently showing in Settings &gt; General &gt; About?",
+        "in_response_to_tweet_id": "740",
+        "response_tweet_id": "739"
+      },
+      {
+        "tweet_id": "739",
+        "author_id": "115865",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:35:32 +0000 2017",
+        "text": "@AppleSupport iOS 11.0.3",
+        "in_response_to_tweet_id": "738",
+        "response_tweet_id": "741"
+      },
+      {
+        "tweet_id": "741",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:46:26 +0000 2017",
+        "text": "@115865 Let's check Settings &gt; General &gt; Software Update. iOS 11.1 was released earlier today. If you see it, please backup &amp; update.",
+        "in_response_to_tweet_id": "739",
+        "response_tweet_id": "742"
+      },
+      {
+        "tweet_id": "742",
+        "author_id": "115865",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:59:53 +0000 2017",
+        "text": "@AppleSupport Okey. Thank you! \ud83e\udd17",
+        "in_response_to_tweet_id": "741",
+        "response_tweet_id": "743"
+      },
+      {
+        "tweet_id": "743",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 23:12:00 +0000 2017",
+        "text": "@115865 Our pleasure. If you're still having issues after a back up and update, contact us back. We're happy to help.",
+        "in_response_to_tweet_id": "742",
+        "response_tweet_id": null
+      }
+    ],
+    "is_branched": false,
+    "turn_count": 10
+  },
+  {
+    "conversation_id": "749",
+    "brand": "AppleSupport",
+    "customer_id": "115866",
+    "turns": [
+      {
+        "tweet_id": "749",
+        "author_id": "115866",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:06:44 +0000 2017",
+        "text": "@AppleSupport Hi! What is going on? Has Youtube lost it? What can be done about it? Thanks for the support! https://t.co/T8ZZp4IH6t",
+        "in_response_to_tweet_id": null,
+        "response_tweet_id": "748"
+      },
+      {
+        "tweet_id": "748",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:18:28 +0000 2017",
+        "text": "@115866 We want to help! DM us and let us know more about the issues you are having. https://t.co/GDrqU22YpT",
+        "in_response_to_tweet_id": "749",
+        "response_tweet_id": null
+      }
+    ],
+    "is_branched": false,
+    "turn_count": 2
+  },
+  {
+    "conversation_id": "752",
+    "brand": "AppleSupport",
+    "customer_id": "115867",
+    "turns": [
+      {
+        "tweet_id": "752",
+        "author_id": "115867",
+        "speaker_role": "customer",
+        "created_at": "Thu Oct 12 10:11:50 +0000 2017",
+        "text": "@AppleSupport my Apple TV works fine with my phone, but when playing videos on Mac air it stutters so much &amp; sound is still on Mac not tv?",
+        "in_response_to_tweet_id": null,
+        "response_tweet_id": "751"
+      },
+      {
+        "tweet_id": "751",
+        "author_id": "115867",
+        "speaker_role": "customer",
+        "created_at": "Tue Oct 31 22:08:39 +0000 2017",
+        "text": "@AppleSupport ? hello",
+        "in_response_to_tweet_id": "752",
+        "response_tweet_id": "750"
+      },
+      {
+        "tweet_id": "750",
+        "author_id": "AppleSupport",
+        "speaker_role": "support",
+        "created_at": "Tue Oct 31 22:18:00 +0000 2017",
+        "text": "@115867 We'd like to get you speaking to our experts here: https://t.co/IBIY3vMgPj",
+        "in_response_to_tweet_id": "751",
+        "response_tweet_id": null
+      }
+    ],
+    "is_branched": false,
+    "turn_count": 3
+  }
+]

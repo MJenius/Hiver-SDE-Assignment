@@ -1,0 +1,136 @@
+﻿# Operational Intent Taxonomy for @AppleSupport Customer Care
+version: "1.0"
+brand: "AppleSupport"
+fallback_intent: "unknown"
+
+intents:
+  - id: "os_update_issues"
+    name: "OS Update Issues & Glitches"
+    description: "Inquiries regarding downloading, installing, verifying, or post-update bugs in iOS, macOS, watchOS, or tvOS."
+    inclusion_criteria: "Mentions update failures, stuck on Apple logo during update, autocorrect glitches introduced after an update, or OS installation error codes."
+    exclusion_criteria: "Battery drainage complaints (route to battery_performance), hardware screen cracks, or app store billing disputes."
+    positive_examples:
+      - "Why is my iPhone stuck on the Apple logo after updating to iOS 11.1?"
+      - "The newest update is making my letter 'I' turn into an A and question mark symbol."
+      - "Cannot download macOS High Sierra, gets error verifying update."
+    negative_examples:
+      - "My battery is draining so fast today" # -> battery_performance
+      - "Can I return my phone?" # -> store_orders_returns
+    precedence: 1
+
+  - id: "battery_performance"
+    name: "Battery & Power Drainage"
+    description: "Problems concerning rapid battery depletion, unexpected shutdowns, slow charging, or overheating."
+    inclusion_criteria: "Explicit complaints about battery life, percentage drops, device not turning on, or charging port issues."
+    exclusion_criteria: "General slow app launch without mention of battery/power."
+    positive_examples:
+      - "My iPhone 6s battery drops from 50% to 1% in ten minutes."
+      - "Phone gets burning hot when plugged into the charger."
+      - "Phone won't turn on or charge even after plugging into wall for an hour."
+    negative_examples:
+      - "App crashes when I open it" # -> app_crash_glitch
+    precedence: 2
+
+  - id: "apple_id_account_security"
+    name: "Apple ID & Account Security"
+    description: "Issues accessing, recovering, or securing Apple ID, iCloud accounts, two-factor authentication, or password resets."
+    inclusion_criteria: "Account locked, forgot password, 2FA code not received, compromised account, or activation lock."
+    exclusion_criteria: "Questions about iCloud storage quotas without login failure."
+    positive_examples:
+      - "My Apple ID is locked for security reasons and I can't receive the verification code."
+      - "Forgot my password and recovery email is old."
+      - "Bought a used iPad and it has someone else's Activation Lock on it."
+    negative_examples:
+      - "How do I upgrade my iCloud storage plan?" # -> icloud_sync_storage
+    precedence: 1
+
+  - id: "app_store_billing_subscriptions"
+    name: "App Store, Purchases & Billing"
+    description: "Inquiries related to unexpected credit card charges, refund requests, subscription cancellations, or in-app purchases."
+    inclusion_criteria: "Unrecognized charges from Apple, pending billing holds, requesting refund for accidental purchase, managing iTunes subscriptions."
+    exclusion_criteria: "App functionality crashes where purchase was successful."
+    positive_examples:
+      - "I was charged $9.99 for an app subscription I canceled last week."
+      - "How do I request a refund for an in-app purchase my child made?"
+      - "My credit card was declined on the App Store for no reason."
+    negative_examples:
+      - "The app downloaded fine but won't open" # -> app_crash_glitch
+    precedence: 2
+
+  - id: "hardware_screen_physical"
+    name: "Hardware, Screen & Physical Damage"
+    description: "Issues involving cracked glass, unresponsive touchscreens, camera failure, Face ID/Touch ID sensor errors, speaker buzz, or physical repairs."
+    inclusion_criteria: "Unresponsive display, cracked glass, lines across OLED screen, physical button failure, water damage inquiries."
+    exclusion_criteria: "Software glitches that can be cleared with a restart."
+    positive_examples:
+      - "Dropping my phone cracked the front glass, how much for AppleCare repair?"
+      - "Half of my touchscreen is completely unresponsive to touch."
+      - "iPhone speaker is buzzing loudly during phone calls."
+    negative_examples:
+      - "Touch screen was frozen but worked after reboot" # -> os_update_issues
+    precedence: 2
+
+  - id: "connectivity_wifi_bluetooth"
+    name: "Connectivity, Wi-Fi & Bluetooth"
+    description: "Inability to connect to Wi-Fi networks, cellular data drops, AirDrop failures, or Bluetooth accessory pairing problems."
+    inclusion_criteria: "Wi-Fi toggle greyed out, dropping cellular signal, AirPods disconnecting, car Bluetooth pairing issues."
+    exclusion_criteria: "Carrier-specific SIM provisioning errors requiring cellular carrier intervention."
+    positive_examples:
+      - "My Wi-Fi button in Settings is greyed out and won't turn on."
+      - "AirPods keep disconnecting every 30 seconds from my MacBook."
+      - "Cannot connect to home Wi-Fi after the recent update."
+    negative_examples:
+      - "AT&T says my bill is overdue so no service" # -> unknown / carrier
+    precedence: 3
+
+  - id: "icloud_sync_storage"
+    name: "iCloud, Backup & Data Sync"
+    description: "Inquiries about backing up devices, restoring from iCloud/iTunes, photos not syncing across devices, or iCloud storage limits."
+    inclusion_criteria: "iCloud backup failing, photo library sync paused, contacts missing after sync, iCloud storage full alerts."
+    exclusion_criteria: "Apple ID account lockout."
+    positive_examples:
+      - "My photos stopped syncing between my iPhone and Mac."
+      - "iCloud backup says there is not enough space even though I bought 50GB."
+      - "How do I restore my notes from an old iCloud backup?"
+    negative_examples:
+      - "Can't log into iCloud account" # -> apple_id_account_security
+    precedence: 3
+
+  - id: "audio_music_media"
+    name: "Apple Music, Podcasts & Audio Playback"
+    description: "Questions regarding streaming on Apple Music, offline music library, podcast sync, or volume controls."
+    inclusion_criteria: "Apple Music playlist disappeared, song won't download offline, podcast app won't refresh episodes."
+    exclusion_criteria: "Hardware speaker physical damage."
+    positive_examples:
+      - "All my downloaded songs in Apple Music disappeared after the update."
+      - "Apple Music keeps pausing whenever my screen turns off."
+      - "Why won't my purchased album show up in iTunes library?"
+    negative_examples:
+      - "Speaker has physical buzzing sound" # -> hardware_screen_physical
+    precedence: 3
+
+  - id: "store_orders_shipping"
+    name: "Apple Store Orders & Delivery"
+    description: "Tracking online Apple Store purchases, delivery dates, trade-in status, or in-store pickup reservations."
+    inclusion_criteria: "Order tracking, delivery delayed, Genius Bar appointment scheduling, trade-in kit inquiries."
+    exclusion_criteria: "App Store virtual app downloads."
+    positive_examples:
+      - "When will my iPhone X preorder ship? Order number W12345678."
+      - "Can I change my pickup time at the Regent Street Apple Store?"
+      - "Haven't received the trade-in box for my old iPhone."
+    negative_examples:
+      - "Billed for an app I didn't buy" # -> app_store_billing_subscriptions
+    precedence: 2
+
+  - id: "unknown"
+    name: "Unknown / Out-of-Distribution / Vague"
+    description: "Messages that do not provide sufficient operational evidence to assign to any supported technical category, or non-support social commentary."
+    inclusion_criteria: "Unintelligible text, pure praise/rant with zero actionable detail, non-Apple third-party issues, or ambiguous questions without context."
+    exclusion_criteria: "Any message clearly describing a supported symptom or product."
+    positive_examples:
+      - "Apple is the worst company in the world."
+      - "Hey can you help me?"
+      - "Does anybody know what time the sun sets?"
+    negative_examples:
+      - "My phone is slow" # -> battery_performance / os_update_issues (probe or triage)
+    precedence: 99

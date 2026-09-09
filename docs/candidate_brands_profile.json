@@ -1,0 +1,82 @@
+[
+  {
+    "brand": "AmazonHelp",
+    "outbound_count": 169840,
+    "inbound_count": 135160,
+    "unique_customers": 48134,
+    "outbound_sample_size": 4980,
+    "outbound_template_rate": 2.37,
+    "inbound_template_rate": 0.52,
+    "resp_coverage_ratio": 1.257
+  },
+  {
+    "brand": "AppleSupport",
+    "outbound_count": 106860,
+    "inbound_count": 97877,
+    "unique_customers": 58567,
+    "outbound_sample_size": 4997,
+    "outbound_template_rate": 8.3,
+    "inbound_template_rate": 0.58,
+    "resp_coverage_ratio": 1.092
+  },
+  {
+    "brand": "Uber_Support",
+    "outbound_count": 56270,
+    "inbound_count": 46622,
+    "unique_customers": 25011,
+    "outbound_sample_size": 5000,
+    "outbound_template_rate": 49.66,
+    "inbound_template_rate": 0.43,
+    "resp_coverage_ratio": 1.207
+  },
+  {
+    "brand": "SpotifyCares",
+    "outbound_count": 43265,
+    "inbound_count": 31307,
+    "unique_customers": 18067,
+    "outbound_sample_size": 4997,
+    "outbound_template_rate": 7.1,
+    "inbound_template_rate": 0.54,
+    "resp_coverage_ratio": 1.382
+  },
+  {
+    "brand": "Delta",
+    "outbound_count": 42253,
+    "inbound_count": 44837,
+    "unique_customers": 23782,
+    "outbound_sample_size": 4891,
+    "outbound_template_rate": 3.93,
+    "inbound_template_rate": 0.53,
+    "resp_coverage_ratio": 0.942
+  },
+  {
+    "brand": "Tesco",
+    "outbound_count": 38573,
+    "inbound_count": 33950,
+    "unique_customers": 17037,
+    "outbound_sample_size": 4994,
+    "outbound_template_rate": 1.98,
+    "inbound_template_rate": 0.4,
+    "resp_coverage_ratio": 1.136
+  },
+  {
+    "brand": "AmericanAir",
+    "outbound_count": 36764,
+    "inbound_count": 48483,
+    "unique_customers": 22859,
+    "outbound_sample_size": 4993,
+    "outbound_template_rate": 1.18,
+    "inbound_template_rate": 0.17,
+    "resp_coverage_ratio": 0.758
+  },
+  {
+    "brand": "comcastcares",
+    "outbound_count": 33031,
+    "inbound_count": 23269,
+    "unique_customers": 14323,
+    "outbound_sample_size": 4997,
+    "outbound_template_rate": 18.69,
+    "inbound_template_rate": 2.51,
+    "resp_coverage_ratio": 1.42
+  }
+]
