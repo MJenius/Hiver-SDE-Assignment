@@ -30,7 +30,6 @@ BRAND = "AppleSupport"
 CHUNK_SIZE = 150_000
 RANDOM_SEED = 42
 
-# Keyword heuristic markers for preliminary candidate bucketing
 INTENT_KEYWORDS = {
     "os_update_issues": [r"\bupdate\b", r"\bios 11\b", r"\bglitch\b", r"\binstall", r"\bverifying\b", r"\bkeyboard\b", r"\bautocorrect\b"],
     "battery_performance": [r"\bbattery\b", r"\bdrain\b", r"\bcharge\b", r"\bcharging\b", r"\boverheating\b", r"\bhot\b", r"\bpower\b"],
@@ -61,7 +60,6 @@ def build_candidates():
     print(f"Loaded {len(tweets_by_id):,} candidate tweets.")
     children_map = build_conversation_graph(list(tweets_by_id.values()))
 
-    # Find conversation roots
     roots = []
     for tw in tweets_by_id.values():
         tid = str(tw["tweet_id"])
@@ -75,7 +73,6 @@ def build_candidates():
     test_roots = set(splits["test"])
     print(f"Test split contains {len(test_roots):,} conversations.")
 
-    # Reconstruct test conversations and extract candidate cases
     test_cases = []
     for r_id in test_roots:
         conv = reconstruct_conversation_paths(r_id, tweets_by_id, children_map, BRAND)
@@ -87,11 +84,9 @@ def build_candidates():
 
     print(f"Total candidate cases in test split: {len(test_cases):,}")
 
-    # Stratify across intent candidates
     golden_candidates = []
     hard_candidates = []
 
-    # Bucketing
     intent_buckets = {k: [] for k in INTENT_KEYWORDS.keys()}
     intent_buckets["unknown"] = []
 
@@ -99,7 +94,6 @@ def build_candidates():
         txt = c.customer_turn.text
         matched_intents = [intent for intent, pats in INTENT_KEYWORDS.items() if matches_keywords(txt, pats)]
         
-        # Check for ambiguity / hard case
         is_hard = False
         ambiguity_type = "none"
         if len(matched_intents) > 1:
@@ -124,14 +118,11 @@ def build_candidates():
         elif len(matched_intents) == 0:
             intent_buckets["unknown"].append(c)
 
-    # Sample ~20 examples per bucket to reach 200 golden candidates
     selected_golden = []
     example_idx = 1
 
     for intent, bucket in intent_buckets.items():
-        # Pick 20 items (mix of short, medium, long)
         bucket_sorted = sorted(bucket, key=lambda c: len(c.customer_turn.text))
-        # Select evenly across lengths
         step = max(1, len(bucket_sorted) // 20) if bucket_sorted else 1
         sampled = bucket_sorted[::step][:20]
         
@@ -145,7 +136,7 @@ def build_candidates():
                 "preceding_context": context_str,
                 "candidate_intent": intent,
                 "reference_historical_response": " | ".join([t.text for t in case.reference_support_turns]),
-                "intent": "",  # To be filled during controlled human annotation
+                "intent": "",
                 "should_escalate": "",
                 "escalation_reason": "",
                 "evidence_sufficient": "",
@@ -157,13 +148,11 @@ def build_candidates():
 
     print(f"Sampled {len(selected_golden)} golden candidates across {len(intent_buckets)} buckets.")
 
-    # Save golden candidates jsonl
     os.makedirs("eval/golden/candidates", exist_ok=True)
     with open("eval/golden/candidates/golden_candidates.jsonl", "w", encoding="utf-8") as f:
         for item in selected_golden:
             f.write(json.dumps(item) + "\n")
 
-    # Save annotation template CSV
     fieldnames = [
         "example_id", "case_id", "conversation_id", "customer_message",
         "preceding_context", "candidate_intent", "reference_historical_response",
@@ -176,7 +165,6 @@ def build_candidates():
         for item in selected_golden:
             writer.writerow(item)
 
-    # Save hard candidates jsonl
     os.makedirs("eval/hard/candidates", exist_ok=True)
     sampled_hard = hard_candidates[:100]
     with open("eval/hard/candidates/hard_candidates.jsonl", "w", encoding="utf-8") as f:
@@ -196,9 +184,9 @@ def build_candidates():
             f.write(json.dumps(rec) + "\n")
 
     print("Candidate generation complete:")
-    print("  -> eval/golden/candidates/golden_candidates.jsonl")
+    print("  -> eval/golden/candidates/golden_candidates.jsonl (200 items)")
     print("  -> eval/golden/annotations_template.csv")
-    print("  -> eval/hard/candidates/hard_candidates.jsonl")
+    print("  -> eval/hard/candidates/hard_candidates.jsonl (100 items - Hard / Stress Set)")
 
 if __name__ == "__main__":
     build_candidates()

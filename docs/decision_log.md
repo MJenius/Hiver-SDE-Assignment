@@ -1,4 +1,4 @@
-﻿# Phase 1 Decision Log
+# Phase 1 Decision Log
 
 This log records the 12 key engineering and methodological decisions made during Phase 1. Each entry documents the rationale, empirical evidence, alternatives considered, and explicit reasons for rejection.
 
@@ -94,12 +94,12 @@ This log records the 12 key engineering and methodological decisions made during
 
 ---
 
-### Decision 11: Dedicated Hard / Adversarial Evaluation Set
-* **Decision**: Programmatically sample 100 hard cases (`eval/hard/candidates/`) covering multi-intent, ultra-short, and context-dependent cases.
-* **Why**: AI agents often perform well on clean benchmark sets but degrade catastrophically on ambiguous real-world inputs.
+### Decision 11: Dedicated Hard / Stress Evaluation Set
+* **Decision**: Programmatically sample 100 naturally occurring hard cases (`eval/hard/candidates/`) covering multi-intent, ultra-short, and context-dependent cases.
+* **Why**: AI agents often perform well on clean benchmark sets but degrade catastrophically on ambiguous real-world inputs. The term "Hard / Stress Set" accurately reflects naturally occurring difficult cases, avoiding the misnomer "adversarial" which implies synthetic perturbation attacks.
 * **Evidence**: Reconstructed dataset contains 5,118 branching threads and thousands of ultra-short queries.
-* **Alternative Considered**: Relying exclusively on standard golden set evaluation.
-* **Why Rejected**: Hides real failure modes behind aggregate headline numbers.
+* **Alternative Considered**: Calling them an "adversarial" set, or relying exclusively on standard golden set evaluation.
+* **Why Rejected**: Calling natural data "adversarial" is terminologically inaccurate; omitting a hard evaluation slice hides real failure modes behind aggregate headline numbers.
 
 ---
 

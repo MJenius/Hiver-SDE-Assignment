@@ -2,10 +2,11 @@
 src/reconstruction.py
 Core algorithms for reconstructing multi-turn customer support conversations
 from Twitter directed graph relationship pointers (in_response_to_tweet_id, response_tweet_id).
+Preserves the full graph DAG (nodes and edges) as well as derived linear dialogue paths.
 """
 
-from typing import Dict, List, Set, Optional, Tuple
-from dataclasses import dataclass, asdict
+from typing import Dict, List, Set, Optional, Tuple, Any
+from dataclasses import dataclass, field, asdict
 from datetime import datetime
 
 @dataclass
@@ -32,9 +33,11 @@ class Conversation:
     conversation_id: str
     brand: str
     customer_id: str
-    turns: List[Turn]
+    turns: List[Turn]  # Chronologically sorted unique turns
     is_branched: bool
     turn_count: int
+    graph: Dict[str, List[str]] = field(default_factory=dict)  # parent_id -> list of child_ids
+    derived_paths: List[List[str]] = field(default_factory=list)  # distinct root-to-leaf turn_id paths
 
 def parse_twitter_date(dt_str: str) -> Optional[datetime]:
     try:
@@ -55,8 +58,35 @@ def build_conversation_graph(tweets: List[Dict]) -> Dict[str, List[str]]:
             parent_id = str(parent_id)
             if parent_id not in graph:
                 graph[parent_id] = []
-            graph[parent_id].append(t_id)
+            if t_id not in graph[parent_id]:
+                graph[parent_id].append(t_id)
     return graph
+
+def find_root_to_leaf_paths(root_id: str, graph: Dict[str, List[str]], max_depth: int = 20) -> List[List[str]]:
+    """
+    Finds all distinct linear root-to-leaf paths through the dialogue DAG.
+    """
+    paths = []
+    
+    def dfs(curr_id: str, current_path: List[str], visited: Set[str]):
+        if len(current_path) > max_depth:
+            paths.append(list(current_path))
+            return
+            
+        children = [ch for ch in graph.get(curr_id, []) if ch not in visited]
+        if not children:
+            paths.append(list(current_path))
+            return
+            
+        for ch in children:
+            visited.add(ch)
+            current_path.append(ch)
+            dfs(ch, current_path, visited)
+            current_path.pop()
+            visited.remove(ch)
+
+    dfs(root_id, [root_id], {root_id})
+    return paths
 
 def reconstruct_conversation_paths(
     root_id: str,
@@ -66,14 +96,15 @@ def reconstruct_conversation_paths(
 ) -> Optional[Conversation]:
     """
     Reconstructs a Conversation starting from an initiating root tweet.
-    Uses BFS/DFS to traverse the DAG, ordering turns chronologically.
+    Traverses the sub-DAG, extracts nodes, preserves local graph edges, and computes derived paths.
     """
     if root_id not in tweets_by_id:
         return None
 
     visited = set()
-    turns_list = []
+    turns_dict = {}
     queue = [root_id]
+    local_graph = {}
     is_branched = False
     customer_id = None
 
@@ -101,19 +132,23 @@ def reconstruct_conversation_paths(
             in_response_to_tweet_id=str(tw.get("in_response_to_tweet_id")) if pd_not_na(tw.get("in_response_to_tweet_id")) else None,
             response_tweet_id=str(tw.get("response_tweet_id")) if pd_not_na(tw.get("response_tweet_id")) else None
         )
-        turns_list.append(turn)
+        turns_dict[curr_id] = turn
 
-        children = children_map.get(curr_id, [])
+        children = [ch for ch in children_map.get(curr_id, []) if ch in tweets_by_id and ch not in visited]
         if len(children) > 1:
             is_branched = True
+        local_graph[curr_id] = children
         for ch in children:
-            if ch not in visited:
-                queue.append(ch)
+            queue.append(ch)
 
-    if not turns_list:
+    if not turns_dict:
         return None
 
-    # Sort turns chronologically
+    # Derive all distinct linear paths in this dialogue graph
+    derived_paths = find_root_to_leaf_paths(root_id, local_graph)
+
+    # Sort turns chronologically for global conversation overview
+    turns_list = list(turns_dict.values())
     turns_list.sort(key=lambda t: parse_twitter_date(t.created_at) or datetime.min)
 
     return Conversation(
@@ -122,40 +157,54 @@ def reconstruct_conversation_paths(
         customer_id=customer_id or "unknown",
         turns=turns_list,
         is_branched=is_branched,
-        turn_count=len(turns_list)
+        turn_count=len(turns_list),
+        graph=local_graph,
+        derived_paths=derived_paths
     )
 
 def extract_cases_from_conversation(conv: Conversation) -> List[Case]:
     """
-    Extracts atomic Cases from a Conversation.
-    Each customer turn requiring response forms a Case with preceding context and subsequent reference support turn(s).
+    Extracts atomic Cases from a Conversation along its derived paths.
+    For each customer turn along a dialogue path, preceding turns along THAT path
+    constitute context, and direct subsequent support turns along THAT path constitute reference responses.
+    This guarantees branching paths never mix context from parallel sibling branches.
     """
-    cases = []
-    turns = conv.turns
+    cases_dict = {}
+    turns_by_id = {t.tweet_id: t for t in conv.turns}
 
-    for i, turn in enumerate(turns):
-        if turn.speaker_role == "customer":
-            context = turns[:i]
-            # Find subsequent support turns immediately responding to this customer turn
-            support_responses = []
-            for next_turn in turns[i+1:]:
-                if next_turn.speaker_role == "support":
-                    support_responses.append(next_turn)
+    for path in conv.derived_paths:
+        path_turns = [turns_by_id[tid] for tid in path if tid in turns_by_id]
+        for i, turn in enumerate(path_turns):
+            if turn.speaker_role == "customer":
+                context = path_turns[:i]
+                support_responses = []
+                for next_turn in path_turns[i+1:]:
+                    if next_turn.speaker_role == "support":
+                        support_responses.append(next_turn)
+                    else:
+                        break
+
+                case_id = f"conv_{conv.conversation_id}_turn_{turn.tweet_id}"
+                # If a customer turn appears in multiple branches, merge distinct responses
+                if case_id not in cases_dict:
+                    cases_dict[case_id] = Case(
+                        case_id=case_id,
+                        conversation_id=conv.conversation_id,
+                        customer_turn=turn,
+                        context_turns=context,
+                        reference_support_turns=support_responses,
+                        has_reference_response=len(support_responses) > 0
+                    )
                 else:
-                    # Next customer turn begins subsequent case
-                    break
+                    # Append any newly discovered responses from alternative branches
+                    existing = cases_dict[case_id]
+                    seen_tids = {t.tweet_id for t in existing.reference_support_turns}
+                    for resp in support_responses:
+                        if resp.tweet_id not in seen_tids:
+                            existing.reference_support_turns.append(resp)
+                    existing.has_reference_response = len(existing.reference_support_turns) > 0
 
-            case_id = f"conv_{conv.conversation_id}_turn_{turn.tweet_id}"
-            cases.append(Case(
-                case_id=case_id,
-                conversation_id=conv.conversation_id,
-                customer_turn=turn,
-                context_turns=context,
-                reference_support_turns=support_responses,
-                has_reference_response=len(support_responses) > 0
-            ))
-
-    return cases
+    return list(cases_dict.values())
 
 def pd_not_na(val) -> bool:
     if val is None:

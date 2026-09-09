@@ -4,9 +4,10 @@
 * **Raw Extracted Brand Tweets**: 204,756
 * **Initiating Dialogue Roots**: 53,427
 * **Reconstructed Two-Sided Conversations (>= 2 turns)**: 53,010
-* **Total Actionable Cases Extracted**: 84,608
+* **Total Actionable Cases Extracted**: 84,600
 * **Branching Nodes (1-to-many responses)**: 5,118
 * **Orphan Turns (parent tweet deleted or unobserved)**: 30,201
+* **Multi-Path Conversations (Branched DAGs)**: 3,354
 
 ## 2. Conversation Length Distribution (Turns per Conversation)
 
@@ -21,7 +22,8 @@
 | 8 turns | 731 | 1.38% |
 | 9 turns | 286 | 0.54% |
 
-## 3. Structural Anomalies Handled
-1. **Branching Threads**: When multiple support agents reply to the same customer turn, both responses are preserved in chronological turn order and flagged as `is_branched = True`.
-2. **Missing Parents / Orphans**: Twitter users frequently reply to tweets outside the 2017 scrape window or deleted tweets. Such customer turns are treated as sub-tree roots rather than dropping the conversation.
-3. **Self-Loops**: Self-referencing tweet IDs are explicitly filtered during graph construction to prevent infinite cycles.
+## 3. Structural Graph & Path Preservation
+1. **Node and Edge Adjacency**: Each conversation preserves its local DAG graph (`graph: parent_id -> [child_ids]`).
+2. **Derived Path Extraction**: Rather than flattening branched trees chronologically, the pipeline derives all distinct root-to-leaf paths (`derived_paths`).
+3. **Context Isolation**: For any customer turn requiring response, context is formed strictly from ancestors along its specific dialogue path, preventing sibling branches from leaking unobserved context.
+4. **Self-Loops & Cycles**: Self-referencing tweet IDs are explicitly filtered during graph construction.

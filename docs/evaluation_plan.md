@@ -1,4 +1,4 @@
-﻿# Formal Evaluation Plan & Metric Formulations
+# Formal Evaluation Plan & Metric Formulations
 
 ## 1. Evaluation Overview
 This document specifies the exact evaluation framework, metric formulations, baseline standards, and LLM-as-judge meta-evaluation protocols to be employed in Phase 2.
@@ -10,7 +10,7 @@ No fabricated metrics or placeholder scores are reported here; this document est
 1. **Development Set (`dev`)**: 10% partition (~5,000 conversations) used for prompt iteration, retriever threshold tuning, and error diagnosis.
 2. **Validation Set**: 10% sub-sample from development used for hyperparameter selection and baseline validation.
 3. **Golden Evaluation Set (`eval/golden/final/`)**: Exactly 200 hand-labelled, verified examples held out completely from development.
-4. **Hard / Adversarial Set (`eval/hard/`)**: 100 challenging examples specifically targeting multi-intent, ultra-short, typo-heavy, and conflicting resolution cases.
+4. **Hard / Stress Evaluation Set (`eval/hard/`)**: 100 naturally occurring challenging examples specifically targeting multi-intent, ultra-short, typo-heavy, and context-dependent cases.
 
 ---
 
